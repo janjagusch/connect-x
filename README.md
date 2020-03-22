@@ -7,7 +7,7 @@ My contribution to the [Connect X](https://www.kaggle.com/c/connectx) competitio
 ### Requirements
 
 - You have stored the Kaggle API credentials file according the [official instructions](https://github.com/Kaggle/kaggle-api#api-credentials).
-- You have [Poetry](https://github.com/python-poetry/poetry) installed in your global Python.
+- You have [Poetry](https://github.com/python-poetry/poetry) installed in your global Python environment.
 
 ### Installation
 
