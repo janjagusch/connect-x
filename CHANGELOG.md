@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Fixed `bin/check_release` script again.
+
 ## 0.1.1
 
 - Fixed `bin/check_release` script.
