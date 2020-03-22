@@ -10,7 +10,7 @@ changelog_version=$(sed '3q;d' CHANGELOG.md \
 
 package_version=$(cat pyproject.toml | grep ^version | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*[^"]*\).*$/\1/')
 
-release_version="${TRAVIS_COMMIT}"
+release_version="${TRAVIS_TAG}"
 
 if [ "${package_version}" != "${release_version}" ]; then (echo "ERROR: Version mismatch (${changelog_version} != ${release_version})"; exit 1) fi;
 
