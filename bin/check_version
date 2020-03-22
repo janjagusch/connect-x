@@ -8,20 +8,9 @@ set -e
 unreleased="## Unreleased Changes"
 third_line=$(sed '3q;d' CHANGELOG.md \
  | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*[^"]*\).*$/\1/')
-changelog_version=$(grep -m1 "^## [0-9]" CHANGELOG.md \
- | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*[^"]*\).*$/\1/')
 
 package_version=$(grep ^version pyproject.toml | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*[^"]*\).*$/\1/')
-helm_chart_version=$(grep appVersion helm/Chart.yaml | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*[^"]*\).*$/\1/')
 
-if [ "${changelog_version}" != "${package_version}" ];
-    then (echo "ERROR: Version mismatch between CHANGELOG.md and pyproject.toml: \
-        (${changelog_version} != ${package_version})"; exit 1)
-fi;
-if [ "${helm_chart_version}" != "${package_version}" ];
-    then (echo "ERROR: Version mismatch between helm/Chart.yaml and pyproject.toml: \
-        (${helm_chart_version} != ${package_version})"; exit 1)
-fi;
 if [ "${third_line}" != "${package_version}" ] &&  [ "${third_line}" != "${unreleased}" ];
-    then (echo "ERROR: Third line of the CHANGELOG should contain the package_version or the text '${unreleased}'"; exit 1)
+    then (echo "ERROR: Third line of CHANGELOG.md should contain the `package_version` of pyproject.toml or '${unreleased}'."; exit 1)
 fi;
