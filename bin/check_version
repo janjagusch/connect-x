@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+#
+# This script checks whether the most recent version in CHANGELOG.md corresponds to
+# the version in pyproject.toml.
+
+set -e
+
+unreleased="## Unreleased Changes"
+third_line=$(sed '3q;d' CHANGELOG.md \
+ | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*[^"]*\).*$/\1/')
+
+package_version=$(grep ^version pyproject.toml | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*[^"]*\).*$/\1/')
+
+if [ "${third_line}" != "${package_version}" ] &&  [ "${third_line}" != "${unreleased}" ];
+    then (echo "ERROR: Third line of CHANGELOG.md should contain the `package_version` of pyproject.toml or '${unreleased}'."; exit 1)
+fi;

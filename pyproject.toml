@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "connect-x"
+version = "0.1.0"
+description = "My contribution to the [Connect X](https://www.kaggle.com/c/connectx) competition on [Kaggle](https://www.kaggle.com/)."
+authors = ["Jan-Benedikt Jagusch <jan.jagusch@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+numpy = "^1.18.2"
+kaggle-environments = "^0.1.6"
+scipy = "^1.4.1"
+gym = "^0.17.1"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.4.4"
+pytest = "^5.4.1"
+tox = "^3.14.5"
+black = "^19.10b0"
+pytest-cov = "^2.8.1"
+kaggle = "^1.5.6"
+codecov = "^2.0.22"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
