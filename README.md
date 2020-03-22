@@ -13,29 +13,30 @@ My contribution to the [Connect X](https://www.kaggle.com/c/connectx) competitio
 
 1. Clone the repository from GitHub.
 
-```shell
-git clone git@github.com:janjagusch/connect-x.git
-```
+	```
+	git clone git@github.com:janjagusch/connect-x.git
+	```
 
 1. Install the dependencies.
 
-```shell
-poetry install
-```
+	```
+	poetry install
+	```
 
 ## Usage
 
-Build your own ConnectX agent. When you are satisfied with the result, make sure your submission is valid.
+1. Build your own Connect X agent.
+1. Make sure your `submission.py` is valid.
 
-```shell
-poetry run bin/validate_submission
-```
+	```
+	poetry run bin/validate_submission
+	```
 
-Then, submit.
+1. Submit.
 
-```shell
-poetry run bin/submit
-```
+	```
+	poetry run bin/submit
+	```
 
 ## Help and Support
 
