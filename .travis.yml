@@ -1,0 +1,42 @@
+language: python
+python: "3.7"
+dist: xenial
+
+stages:
+  - lint
+  - test
+  - name: release
+    if: tag IS present
+
+cache:
+  paths:
+    - .venv
+
+before_install:
+  - bin/check_version
+  - export POETRY_VERSION="1.0.3"
+  - curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+  - source $HOME/.poetry/env
+
+install:
+  - poetry config virtualenvs.in-project true
+  - poetry install -v
+
+jobs:
+  include:
+    - stage: lint
+      script:
+        - make lint
+    - stage: test
+      python:
+        - "3.7"
+        - "3.8"
+      script:
+        - poetry run pytest --cov=connect_x --cov-report term-missing tests/
+        - poetry run codecov
+    - stage: release
+      script:
+        - bin/check_release
+        - poetry config http-basic.pypi $PYPI_USERNAME $PYPI_PASSWORD
+        - poetry build -f sdist
+        - poetry publish
