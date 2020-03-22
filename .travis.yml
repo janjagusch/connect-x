@@ -2,6 +2,9 @@ language: python
 python: "3.7"
 dist: xenial
 
+env:
+  - KAGGLE_CONFIG_DIR="${TRAVIS_BUILD_DIR}"  
+
 stages:
   - lint
   - test
@@ -35,8 +38,9 @@ jobs:
         - poetry run pytest --cov=connect_x --cov-report term-missing tests/
         - poetry run codecov
     - stage: release
-      script:
+      before_script:
         - bin/check_release
-        - poetry config http-basic.pypi $PYPI_USERNAME $PYPI_PASSWORD
-        - poetry build -f sdist
-        - poetry publish
+        - poetry run bin/validate_submission
+        - echo "${KAGGLE_API_TOKEN}" | base64 -d > kaggle.json
+      script:
+        - bin/submit "${CI_COMMIT_REF_NAME}"

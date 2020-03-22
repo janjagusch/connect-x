@@ -1,0 +1,10 @@
+#! /bin/bash
+
+submit() {
+    kaggle competitions submit \
+        -f submission.py \
+        -m "${1}" \
+        connectx
+}
+
+submit "$@"
