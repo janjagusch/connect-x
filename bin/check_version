@@ -6,6 +6,7 @@
 set -e
 
 unreleased="## Unreleased Changes"
+
 third_line=$(sed '3q;d' CHANGELOG.md \
  | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*[^"]*\).*$/\1/')
 
