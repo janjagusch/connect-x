@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased Changes
+
+- Updated instructions in `README.md` on how to submit through Travis CI.
+
 ## 0.1.3
 
 - Fixed and cleaned up `.travis.yml` and `bin/` scripts.
