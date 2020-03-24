@@ -38,7 +38,7 @@ My contribution to the [Connect X](https://www.kaggle.com/c/connectx) competitio
 	poetry run bin/submit
 	```
 
-Note: You can also submit solutions through the CI when releasing a new tag. In order to do so, you new to have the `KAGGLE_API_TOKEN` variable set.
+**Note**: You can also submit solutions through the CI when releasing a new tag. In order to do so, you need to have the `KAGGLE_API_TOKEN` variable set.
 
 1. Create a new token for the [Kaggle API](https://github.com/Kaggle/kaggle-api) and store it as `kaggle.json`.
 1. In the directory where `kaggle.json` is stored, run:
