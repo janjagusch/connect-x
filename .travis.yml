@@ -40,7 +40,7 @@ jobs:
     - stage: release
       before_script:
         - bin/check_release
-        - poetry run bin/validate_submission
+        - poetry run python bin/validate_submission
         - echo "${KAGGLE_API_TOKEN}" | base64 -d > kaggle.json
       script:
-        - bin/submit "${CI_COMMIT_REF_NAME}"
+        - bin/submit "${TRAVIS_TAG}"
