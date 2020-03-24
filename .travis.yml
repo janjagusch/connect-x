@@ -39,7 +39,7 @@ jobs:
         - poetry run codecov
     - stage: release
       before_script:
-        - bin/check_release
+        - bin/check_release "${TRAVIS_TAG}"
         - poetry run python bin/validate_submission
         - echo "${KAGGLE_API_TOKEN}" | base64 -d > kaggle.json
       script:

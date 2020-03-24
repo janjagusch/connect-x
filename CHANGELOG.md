@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+- Fixed and cleaned up `.travis.yml` and `bin/` scripts.
+
 ## 0.1.2
 
 - Fixed `bin/check_release` script again.

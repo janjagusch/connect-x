@@ -27,3 +27,5 @@ if __name__ == "__main__":
             f"agent #2 state: '{env.state[1].status}'",
         )
 
+    print("`submission.py` file is valid.")
+
