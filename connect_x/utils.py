@@ -5,6 +5,34 @@ This module contains useful functions for this project.
 import numpy as np
 
 
+def board_to_matrix(board, n_rows, n_cols):
+    """
+    Converts a board into a numpy matrix.
+
+    Args:
+        board (list): The board state.
+        n_rows (int): Number of rows on the board.
+        n_cols (int): Number of columns on the board.
+
+    Returns:
+        np.array: The board as a matrix.
+    """
+    return np.array(board).reshape(n_rows, n_cols)
+
+
+def matrix_to_board(matrix):
+    """
+    Converts a matrix into a board.
+
+    Args:
+        matrix (np.array): The board matrix.
+
+    Returns:
+        list: The board as a list.
+    """
+    return matrix.reshape(1, -1).tolist()[0]
+
+
 def rolling_window(array, window_size):
     """
     Returns rolling windows over a 1-dimensional array.

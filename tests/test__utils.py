@@ -8,6 +8,20 @@ import numpy as np
 from connect_x import utils
 
 
+# pylint: disable=protected-access
+
+
+@pytest.mark.parametrize(
+    "board,n_rows,n_cols,matrix",
+    [
+        ([1, 2, 3, 4, 5, 6, 7, 8], 2, 4, [[1, 2, 3, 4], [5, 6, 7, 8]]),
+        ([1, 2, 3, 4, 5, 6, 7, 8], 4, 2, [[1, 2], [3, 4], [5, 6], [7, 8]]),
+    ],
+)
+def test_board_to_matrix(board, n_rows, n_cols, matrix):
+    np.testing.assert_array_equal(utils.board_to_matrix(board, n_rows, n_cols), matrix)
+
+
 @pytest.mark.parametrize(
     "array,window_size,windows",
     [
@@ -70,5 +84,5 @@ def test_matrix_rows(matrix, rows, to_array):
         )
     ],
 )
-def test_matrix_rows(matrix, columns, to_array):
+def test_matrix_cols(matrix, columns, to_array):
     np.testing.assert_array_equal(utils.matrix_columns(to_array(matrix)), columns)

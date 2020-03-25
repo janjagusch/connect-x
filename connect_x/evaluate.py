@@ -7,21 +7,6 @@ import numpy as np
 from . import utils
 
 
-def _board_to_matrix(board, n_rows, n_cols):
-    """
-    Converts a board into a numpy matrix.
-
-    Args:
-        board (list): The board state.
-        n_rows (int): Number of rows on the board.
-        n_cols (int): Number of columns on the board.
-
-    Returns:
-        np.array: The board as a matrix.
-    """
-    return np.array(board).reshape(n_rows, n_cols)
-
-
 def _windows(matrix, window_size):
     """
     Calculates all windows that are relevant to evaluate to board state from a matrix.
@@ -34,11 +19,13 @@ def _windows(matrix, window_size):
         np.array: The windows of the board.
     """
     windows = []
+    # pylint: disable=bad-continuation
     for array in (
         utils.matrix_rows(matrix)
         + utils.matrix_columns(matrix)
         + utils.matrix_diagonals(matrix)
     ):
+        # pylint: enable=bad-continuation
         if len(array) >= window_size:
             windows.extend(utils.rolling_window(array, window_size))
     return np.array(windows)
@@ -100,7 +87,7 @@ def _evaluate_heuristic(eval_windows):
     """
     values = np.exp2(eval_windows.sum(axis=1))
     not_contains_other = eval_windows.min(axis=1) != -1
-    return (values * not_contains_other)[0]
+    return (values * not_contains_other).mean()
 
 
 def _evaluate(eval_windows):
@@ -122,15 +109,23 @@ def _evaluate(eval_windows):
 
 
 def evaluate(observation, configuration):
+    """
+    Evaluates an observation.
+
+    Args:
+        observation (dict): The observation.
+        configuration (dict): The configuration.
+
+    Returns:
+        tuple: (The value of the board, Whether the game has ended).
+    """
     mark = observation.mark
     mark_opponent = 2 if mark == 1 else 1
-    board = observation.board
-    n_rows = configuration.rows
-    n_cols = configuration.columns
-    window_size = configuration.inarow
 
-    matrix = _board_to_matrix(board, n_rows, n_cols)
-    windows = _windows(matrix, window_size)
+    matrix = utils.board_to_matrix(
+        observation.board, configuration.rows, configuration.columns
+    )
+    windows = _windows(matrix, configuration.inarow)
     eval_windows = _eval_windows(windows, mark)
     eval_windows_opponent = _eval_windows(windows, mark_opponent)
     value, done = _evaluate(eval_windows)

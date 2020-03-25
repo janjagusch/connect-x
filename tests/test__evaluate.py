@@ -8,17 +8,7 @@ import numpy as np
 from connect_x import evaluate
 
 
-@pytest.mark.parametrize(
-    "board,n_rows,n_cols,matrix",
-    [
-        ([1, 2, 3, 4, 5, 6, 7, 8], 2, 4, [[1, 2, 3, 4], [5, 6, 7, 8]]),
-        ([1, 2, 3, 4, 5, 6, 7, 8], 4, 2, [[1, 2], [3, 4], [5, 6], [7, 8]]),
-    ],
-)
-def test__board_to_matrix(board, n_rows, n_cols, matrix):
-    np.testing.assert_array_equal(
-        evaluate._board_to_matrix(board, n_rows, n_cols), matrix
-    )
+# pylint: disable=protected-access
 
 
 @pytest.mark.parametrize(
