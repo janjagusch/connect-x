@@ -16,10 +16,6 @@ def rolling_window(array, window_size):
     Retuns:
         list: List of np.array objects.
     """
-    assert window_size > 0, "window_size must be > 0."
-    assert window_size <= len(array), "window_size must be <= len(array)"
-    if isinstance(array, list):
-        array = np.array(array)
     shape = array.shape[:-1] + (array.shape[-1] - window_size + 1, window_size)
     strides = array.strides + (array.strides[-1],)
     return np.lib.stride_tricks.as_strided(array, shape=shape, strides=strides)
@@ -39,8 +35,6 @@ def matrix_diagonals(matrix):
     Returns:
         list: List of np.array objects.
     """
-    if isinstance(matrix, list):
-        matrix = np.array(matrix)
     return _diagonals(matrix) + _diagonals(matrix[::-1])
 
 
@@ -54,9 +48,7 @@ def matrix_rows(matrix):
     Returns:
         list: List of np.array objects.
     """
-    if isinstance(matrix, list):
-        matrix = np.array(matrix)
-    return [matrix[row_index, :] for row_index in range(matrix.shape[0])]
+    return list(matrix)
 
 
 def matrix_columns(matrix):
@@ -69,6 +61,4 @@ def matrix_columns(matrix):
     Returns:
         list: List of np.array objects.
     """
-    if isinstance(matrix, list):
-        matrix = np.array(matrix)
-    return [matrix[:, column_index] for column_index in range(matrix.shape[1])]
+    return list(matrix.T)

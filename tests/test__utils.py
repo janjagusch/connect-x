@@ -15,8 +15,10 @@ from connect_x import utils
         ([1, 2, 3, 4], 3, [[1, 2, 3], [2, 3, 4]]),
     ],
 )
-def test_rolling_window(array, window_size, windows):
-    assert (utils.rolling_window(array, window_size) == windows).all()
+def test_rolling_window(array, window_size, windows, to_array):
+    np.testing.assert_array_equal(
+        utils.rolling_window(to_array(array), window_size), windows
+    )
 
 
 @pytest.mark.parametrize(
@@ -41,8 +43,8 @@ def test_rolling_window(array, window_size, windows):
         )
     ],
 )
-def test_matrix_diagonals(matrix, diagonals):
-    for actual, target in zip(utils.matrix_diagonals(matrix), diagonals):
+def test_matrix_diagonals(matrix, diagonals, to_array):
+    for actual, target in zip(utils.matrix_diagonals(to_array(matrix)), diagonals):
         assert (actual == target).all()
 
 
@@ -55,9 +57,8 @@ def test_matrix_diagonals(matrix, diagonals):
         )
     ],
 )
-def test_matrix_rows(matrix, rows):
-    for actual, target in zip(utils.matrix_rows(matrix), rows):
-        assert (actual == target).all()
+def test_matrix_rows(matrix, rows, to_array):
+    np.testing.assert_array_equal(utils.matrix_rows(to_array(matrix)), rows)
 
 
 @pytest.mark.parametrize(
@@ -69,6 +70,5 @@ def test_matrix_rows(matrix, rows):
         )
     ],
 )
-def test_matrix_rows(matrix, columns):
-    for actual, target in zip(utils.matrix_columns(matrix), columns):
-        assert (actual == target).all()
+def test_matrix_rows(matrix, columns, to_array):
+    np.testing.assert_array_equal(utils.matrix_columns(to_array(matrix)), columns)
