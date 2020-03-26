@@ -3,6 +3,7 @@
 ## Unreleased Changes
 
 - Updated instructions in `README.md` on how to submit through Travis CI.
+- Added Minimax algorithm.
 
 ## 0.1.3
 
