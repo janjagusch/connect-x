@@ -1,0 +1,8 @@
+#! /bin/bash
+
+build_submission_standalone() {
+    stickytape submission.py > "${1:-submission_standalone.py}"
+
+}
+
+build_submission_standalone "$@"
