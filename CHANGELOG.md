@@ -2,7 +2,7 @@
 
 ## 0.2.1
 
-- Set `max_depth=3` in `submission.py`
+- Set `max_depth=3` in `submission.py`.
 
 ## 0.2.0
 
