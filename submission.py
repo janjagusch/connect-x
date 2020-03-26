@@ -1,5 +1,4 @@
-from connect_x.tree import ConnectXNode
-from connect_x.minimax import minimax
+from connect_x.minimax import minimax, ConnectXNode
 
 
 def act(observation, configuration):
