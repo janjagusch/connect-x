@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Set `max_depth=3` in `submission.py`
+
 ## 0.2.0
 
 - Updated instructions in `README.md` on how to submit through Travis CI.
