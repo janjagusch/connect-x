@@ -5,7 +5,7 @@ This module implementy the Minimax algorithm.
 import numpy as np
 
 
-def minimax(node, max_depth=5, maximize=True, current_depth=None):
+def minimax(node, max_depth=4, maximize=True, current_depth=None):
     """
     Executes the Minimax algorithm.
 
