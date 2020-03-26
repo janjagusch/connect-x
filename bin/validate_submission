@@ -13,7 +13,7 @@ class ValidationError(Exception):
 if __name__ == "__main__":
         
     out = sys.stdout
-    submission = utils.read_file("submission.py")
+    submission = utils.read_file("submission_standalone.py")
     agent = utils.get_last_callable(submission)
     sys.stdout = out
 

@@ -2,7 +2,7 @@
 
 submit() {
     kaggle competitions submit \
-        -f submission.py \
+        -f submission_standalone.py \
         -m "${1}" \
         connectx
 }
