@@ -1,4 +1,8 @@
+from connect_x.tree import ConnectXNode
+from connect_x.minimax import minimax
+
+
 def act(observation, configuration):
-    board = observation.board
-    columns = configuration.columns
-    return [c for c in range(columns) if board[c] == 0][0]
+    node = ConnectXNode(observation, configuration)
+    next_node, value = minimax(node, max_depth=4)
+    return int(next_node.action)

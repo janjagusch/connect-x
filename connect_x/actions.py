@@ -58,21 +58,22 @@ def possible_actions(observation, configuration):
     n_cols = configuration.columns
 
     matrix = utils.board_to_matrix(board, n_rows, n_cols)
-    return _possible_actions(matrix)
+    return list(_possible_actions(matrix))
 
 
-def step(observation, configuration, action):
+def step(observation, configuration, action, mark):
     """
     Executes an action and returns the new observation.
 
     Args:
         observation (dict): The observation.
         configuration (dict): The configuration.
+        action (int): The index of the column where you want to insert the token.
+        mark (int): The mark of the token.
 
     Returns:
         dict: The new observation.
     """
-    mark = observation.mark
     board = observation.board
     n_rows = configuration.rows
     n_cols = configuration.columns

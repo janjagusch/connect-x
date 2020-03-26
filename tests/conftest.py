@@ -23,3 +23,19 @@ def env_():
     Connectx environment.
     """
     return make("connectx", debug=True)
+
+
+@pytest.fixture(name="configuration", scope="function")
+def configuration_(env):
+    """
+    Connectx configuration.
+    """
+    return env.configuration
+
+
+@pytest.fixture(name="observation", scope="function")
+def observation_(env):
+    """
+    Connectx observation.
+    """
+    return env.state[0].observation

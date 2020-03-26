@@ -23,6 +23,13 @@ def test_board_to_matrix(board, n_rows, n_cols, matrix):
 
 
 @pytest.mark.parametrize(
+    "matrix,board", [([[1, 2, 3, 4], [5, 6, 7, 8]], [1, 2, 3, 4, 5, 6, 7, 8])]
+)
+def test_matrix_to_board(matrix, board, to_array):
+    assert utils.matrix_to_board(to_array(matrix)) == board
+
+
+@pytest.mark.parametrize(
     "array,window_size,windows",
     [
         ([1, 2, 3, 4], 2, [[1, 2], [2, 3], [3, 4]]),
@@ -86,3 +93,8 @@ def test_matrix_rows(matrix, rows, to_array):
 )
 def test_matrix_cols(matrix, columns, to_array):
     np.testing.assert_array_equal(utils.matrix_columns(to_array(matrix)), columns)
+
+
+@pytest.mark.parametrize("mark,other_mark", [(1, 2), (2, 1), (None, None),])
+def test_other_mark(mark, other_mark):
+    assert utils.other_mark(mark) == other_mark

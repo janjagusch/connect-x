@@ -5,6 +5,22 @@ This module contains useful functions for this project.
 import numpy as np
 
 
+def other_mark(mark):
+    """
+    Given the mark of a token, returns the other mark.
+
+    Args:
+        mark (int): The mark of the token.
+
+    Returns:
+        int: The other mark or `None`, when mark is `None`.
+    """
+    if not mark:
+        return None
+    assert mark in (1, 2)
+    return 2 if mark == 1 else 1
+
+
 def board_to_matrix(board, n_rows, n_cols):
     """
     Converts a board into a numpy matrix.
@@ -41,7 +57,7 @@ def rolling_window(array, window_size):
         array (np.array): A 1-dimensional arary.
         window_size (int): The window size.
 
-    Retuns:
+    Returns:
         list: List of np.array objects.
     """
     shape = array.shape[:-1] + (array.shape[-1] - window_size + 1, window_size)

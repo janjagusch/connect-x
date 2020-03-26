@@ -72,6 +72,7 @@ def _evaluate_board_full(eval_windows):
     Returns:
         bool: Whether the board is full.
     """
+
     return not (eval_windows == 0).any()
 
 
