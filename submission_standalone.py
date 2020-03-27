@@ -69,5 +69,5 @@ with __stickytape_temporary_dir() as __stickytape_working_dir:
 
     def act(observation, configuration):
         node = ConnectXNode(observation, configuration)
-        next_node, value = minimax(node, max_depth=4)
+        next_node, value = minimax(node, max_depth=3)
         return int(next_node.action)
