@@ -5,6 +5,33 @@ This module contains useful functions for this project.
 import numpy as np
 
 
+def game_round(matrix):
+    """
+    Returns in which round the game is.
+
+    Args:
+        matrix (np.array): The board as a matrix.
+
+    Returns:
+        int: The round of the game.
+    """
+    return (matrix != 0).sum()
+
+
+def middle_column(matrix):
+    """
+    Returns the index of the middle column of the boards.
+
+    Args:
+        matrix (np.array): The board as a matrix.
+
+    Returns:
+        int: The index of the middle column.
+    """
+    _, columns = matrix.shape
+    return int(np.floor(columns / 2))
+
+
 def other_mark(mark):
     """
     Given the mark of a token, returns the other mark.
