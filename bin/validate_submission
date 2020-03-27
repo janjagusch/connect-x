@@ -22,10 +22,10 @@ if __name__ == "__main__":
 
     if not (env.state[0].status == env.state[1].status == "DONE"):
         raise ValidationError(
-            "`submission.py` file is not vaild. ",
+            "`submission_standalone.py` file is not vaild. ",
             f"agent #1 state: '{env.state[0].status}', ",
             f"agent #2 state: '{env.state[1].status}'",
         )
 
-    print("`submission.py` file is valid.")
+    print("`submission_standalone.py` file is valid.")
 

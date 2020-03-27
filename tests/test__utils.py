@@ -12,6 +12,21 @@ from connect_x import utils
 
 
 @pytest.mark.parametrize(
+    "matrix,game_round", [([0, 0, 0], 0), ([1, 0, 0], 1), ([1, 2, 0], 2),],
+)
+def test_game_round(matrix, game_round, to_array):
+    assert utils.game_round(to_array(matrix)) == game_round
+
+
+@pytest.mark.parametrize(
+    "matrix,middle_column",
+    [([[0, 0, 0]], 1), ([[0, 0, 0, 0]], 2), ([[0, 0, 0, 0, 0]], 2),],
+)
+def test_middle_column(matrix, middle_column, to_array):
+    assert utils.middle_column(to_array(matrix)) == middle_column
+
+
+@pytest.mark.parametrize(
     "board,n_rows,n_cols,matrix",
     [
         ([1, 2, 3, 4, 5, 6, 7, 8], 2, 4, [[1, 2, 3, 4], [5, 6, 7, 8]]),
