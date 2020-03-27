@@ -12,6 +12,14 @@ from connect_x import utils
 
 
 @pytest.mark.parametrize(
+    "board,mark,mark_agnostic_board",
+    [([[1, 0, 2], 1, [1, 0, -1]]), ([[1, 0, 2], 2, [-1, 0, 1]])],
+)
+def test_mark_agnostic_board(board, mark, mark_agnostic_board):
+    assert utils.mark_agnostic_board(board, mark) == mark_agnostic_board
+
+
+@pytest.mark.parametrize(
     "matrix,game_round", [([0, 0, 0], 0), ([1, 0, 0], 1), ([1, 2, 0], 2),],
 )
 def test_game_round(matrix, game_round, to_array):

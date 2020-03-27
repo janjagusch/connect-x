@@ -5,6 +5,27 @@ This module contains useful functions for this project.
 import numpy as np
 
 
+def mark_agnostic_board(board, mark):
+    """
+    Makes the board mark agnostic. Replaces your mark with `1` and the other mark with
+    `-1`.
+
+    Args:
+        board (list): The board state.
+        mark (int): Your token mark.
+
+    Returns:
+        list: The mark agnostic board.
+    """
+
+    def agnostic(val, mark):
+        if val == 0:
+            return val
+        return 1 if val == mark else -1
+
+    return [agnostic(val, mark) for val in board]
+
+
 def game_round(matrix):
     """
     Returns in which round the game is.

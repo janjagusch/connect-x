@@ -1,0 +1,79 @@
+#! python
+
+from datetime import datetime
+import gzip
+import json
+import logging
+
+from kaggle_environments import make
+
+from connect_x.minimax import minimax, ConnectXNode
+from connect_x import utils
+
+
+_LOGGER = logging.getLogger(__name__)
+
+
+def flatten_tree(node, flat_tree=None):
+    """
+    Flatten a tree of ConnectXNodes into a dictionary.
+
+    Args:
+        node (connect_x.minimax.tree.ConnectXNode): The root node.
+        flat_tree (dict, optional): Where to append the nodes.
+
+    Returns:
+        dict: The flat tree as a dictionary.
+    """
+    flat_tree = flat_tree or {}
+    key = "".join(str(i) for i in utils.mark_agnostic_board(node.observation.board, node.observation.mark))
+    flat_tree[key] = node.value
+    for child in node.children:
+        flatten_tree(child, flat_tree)
+    return flat_tree
+
+
+def write_module(flat_tree, forecast_depth):
+    board_value_map_binary = gzip.compress(json.dumps(flat_tree).encode("ascii"))
+    with open("connect_x/board_value_map.py", "w") as file_pointer:
+        file_pointer.write(
+            '"""\nThis module contains pre-calculated board values.\n"""\n'
+        )
+        file_pointer.write("import gzip\nimport json\n\n")
+        file_pointer.write(f"FORECAST_DEPTH = {forecast_depth}\n\n")
+        file_pointer.write("# pylint: disable=line-too-long\n")
+        file_pointer.write(f'_BOARD_VALUE_MAP_BINARY = {board_value_map_binary}\n\n')
+        file_pointer.write("# pylint: enable=line-too-long\n")
+        file_pointer.write("BOARD_VALUE_MAP = json.loads(gzip.decompress(_BOARD_VALUE_MAP_BINARY))\n")
+
+
+if __name__ == "__main__":
+
+    MAX_DEPTH  = 3
+
+    env = make("connectx")
+    observation = env.state[0].observation
+    configuration = env.configuration
+
+    node_1 = ConnectXNode(observation, configuration, mark=1)
+    node_2 = ConnectXNode(observation, configuration, mark=2)
+
+    _LOGGER.info("Starting Minimax ...")
+    start = datetime.now()
+    minimax(node_1, max_depth=MAX_DEPTH)
+    minimax(node_2, max_depth=MAX_DEPTH)
+    end = datetime.now()
+    _LOGGER.info(f"Minimax completed. Time taken: {end - start}.")
+
+    _LOGGER.info("Flattening Minimax tree ...")
+    start = datetime.now()
+    flat_tree_1 = flatten_tree(node_1)
+    flat_tree_2 = flatten_tree(node_2)
+    end = datetime.now()
+    _LOGGER.info(f"Flattening completed. Time taken: {end - start}.")
+    flat_tree = {**flat_tree_1, **flat_tree_2}
+    _LOGGER.info(f"Flat tree has {len(flat_tree)} entries.")
+
+    _LOGGER.info("Writing dictionary into module ...")
+    write_module(flat_tree, MAX_DEPTH)
+    _LOGGER.info("Writing completed.")

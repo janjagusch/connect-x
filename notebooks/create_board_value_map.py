@@ -42,17 +42,24 @@ print(f"time taken: {end - start}.")
 
 # -
 
+
 def make_board_player_agnostic(board, mark):
     def agnostic(val, mark):
         if val == 0:
             return 0
         return 1 if val == mark else -1
+
     return [agnostic(i, mark) for i in board]
 
 
 def flatten_tree(node, flat_tree=None):
     flat_tree = flat_tree or {}
-    key = "".join(str(i) for i in make_board_player_agnostic(node.observation.board, node.observation.mark))
+    key = "".join(
+        str(i)
+        for i in make_board_player_agnostic(
+            node.observation.board, node.observation.mark
+        )
+    )
     flat_tree[key] = node.value
     for child in node.children:
         flatten_tree(child, flat_tree)
@@ -70,5 +77,7 @@ board_value_map_binary = gzip.compress(json.dumps(flat_tree).encode("ascii"))
 with open("../connect_x/state_value.py", "w") as file_pointer:
     file_pointer.write("import gzip\nimport json\n\n")
     file_pointer.write(f"FORECAST_DEPTH = {MAX_DEPTH}\n\n")
-    file_pointer.write(f'_BOARD_VALUE_MAP_BINARY = {board_value_map_binary}\n\n')
-    file_pointer.write("BOARD_VALUE_MAP = json.loads(gzip.decompress(_BOARD_VALUE_MAP_BINARY))\n")
+    file_pointer.write(f"_BOARD_VALUE_MAP_BINARY = {board_value_map_binary}\n\n")
+    file_pointer.write(
+        "BOARD_VALUE_MAP = json.loads(gzip.decompress(_BOARD_VALUE_MAP_BINARY))\n"
+    )

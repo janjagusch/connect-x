@@ -46,21 +46,17 @@ env.render(mode="ipython", width=500, height=450)
 env.play(agents=[None, act])
 
 
-
-
-
-
-
 import numpy as np
 
 state = random_state(steps=12)
 
 from connect_x import utils
 
-matrix = utils.board_to_matrix(state[0].observation.board, env.configuration.rows, env.configuration.columns)
+matrix = utils.board_to_matrix(
+    state[0].observation.board, env.configuration.rows, env.configuration.columns
+)
 
 matrix
-
 
 
 n_tokens_per_column = (matrix != 0).sum(axis=0)
@@ -79,11 +75,21 @@ def horizontal_windows(matrix, row_index, col_index, window_size):
     n_rows, n_cols = matrix.shape
     start_col_index = np.max([0, col_index - (window_size - 1)])
     end_col_index = np.min([col_index, n_cols - (window_size - 1)])
-    return np.array([matrix[row_index, i:i+window_size] for i in range(start_col_index, end_col_index)])
+    return np.array(
+        [
+            matrix[row_index, i : i + window_size]
+            for i in range(start_col_index, end_col_index)
+        ]
+    )
 
 
 def vertical_windows(matrix, row_index, col_index, window_size):
-    return horizontal_windows(matrix=matrix.T, row_index=col_index, col_index=row_index, window_size=window_size)
+    return horizontal_windows(
+        matrix=matrix.T,
+        row_index=col_index,
+        col_index=row_index,
+        window_size=window_size,
+    )
 
 
 def diagonal_windows(matrix, row_index, col_index, window_size):

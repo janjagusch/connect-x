@@ -2,7 +2,7 @@ import gzip
 
 from connect_x.minimax import minimax, ConnectXNode
 from connect_x.move_catalogue import move
-from connect_x.state_value import BOARD_VALUE_MAP
+from connect_x.board_value_map import BOARD_VALUE_MAP, FORECAST_DEPTH
 
 
 def act(observation, configuration):
