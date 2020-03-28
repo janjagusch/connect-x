@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "connect-x"
-version = "0.4.0"
+version = "0.4.1"
 description = "My contribution to the [Connect X](https://www.kaggle.com/c/connectx) competition on [Kaggle](https://www.kaggle.com/)."
 authors = ["Jan-Benedikt Jagusch <jan.jagusch@gmail.com>"]
 license = "MIT"
