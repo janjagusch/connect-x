@@ -29,6 +29,20 @@ lint_pylint: test_missing_init
 	@echo "Pylint linting ..."
 	@poetry run pylint connect_x
 	@poetry run pylint $$(find tests/ -iname "*.py")
+	@poetry run pylint submission.py
 
 lint: lint_black lint_pylint clean
 
+board_action_map:
+	@echo "Buiding connect_x/board_action_map.py ..."
+	@poetry run python bin/create_board_action_map
+	@make format
+
+standalone_submission:
+	@echo "Building submission_standalone.py ..."
+	@poetry run bin/build_submission_standalone
+	@make format
+
+validate_submission:
+	@echo "Validating submission_standalone.py ..."
+	@poetry run python bin/validate_submission

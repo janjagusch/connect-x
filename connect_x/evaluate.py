@@ -21,13 +21,13 @@ def _windows(matrix, window_size):
     windows = []
     # pylint: disable=bad-continuation
     for array in (
-        utils.matrix_rows(matrix)
-        + utils.matrix_columns(matrix)
-        + utils.matrix_diagonals(matrix)
+        utils.board.matrix_rows(matrix)
+        + utils.board.matrix_columns(matrix)
+        + utils.board.matrix_diagonals(matrix)
     ):
         # pylint: enable=bad-continuation
         if len(array) >= window_size:
-            windows.extend(utils.rolling_window(array, window_size))
+            windows.extend(utils.board.rolling_window(array, window_size))
     return np.array(windows)
 
 
@@ -93,7 +93,7 @@ def _evaluate_heuristic(eval_windows):
 
 def _evaluate(eval_windows):
     """
-    Evaluates the board. Calculates a value for the board and checks whether the game
+    Evaluates the board. Calculates a value for the board. and checks whether the game
     has ended.
 
     Args:
@@ -121,9 +121,9 @@ def evaluate(observation, configuration):
         tuple: (The value of the board, Whether the game has ended).
     """
     mark = observation.mark
-    mark_opponent = 2 if mark == 1 else 1
+    mark_opponent = utils.board.other_mark(mark)
 
-    matrix = utils.board_to_matrix(
+    matrix = utils.board.board_to_matrix(
         observation.board, configuration.rows, configuration.columns
     )
     windows = _windows(matrix, configuration.inarow)

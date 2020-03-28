@@ -4,7 +4,7 @@ This module provides tree structures for the Minimax algorithm.
 
 from connect_x.actions import possible_actions, step
 from connect_x.evaluate import evaluate
-from connect_x.utils import other_mark
+from connect_x.utils.board import other_mark
 
 
 class TreeNode:

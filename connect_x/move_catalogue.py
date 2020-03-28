@@ -10,7 +10,7 @@ def _move_0(matrix, **kwargs):
     """
     If you start the game and are first player, always choose the middle column.
     """
-    return utils.middle_column(matrix)
+    return utils.board.middle_column(matrix)
 
 
 def _move_1(matrix, **kwargs):
@@ -18,7 +18,7 @@ def _move_1(matrix, **kwargs):
     If you start the game and are the second player, make sure not to fall for the
     cheap trick.
     """
-    middle_column = utils.middle_column(matrix)
+    middle_column = utils.board.middle_column(matrix)
     if matrix[-1, middle_column] != 0:
         return middle_column + 1
     return middle_column
@@ -32,7 +32,7 @@ def _move_2(matrix, **kwargs):
     If you are the first player and it is your second turn, see if you can go for the
     cheap trick.
     """
-    middle_column = utils.middle_column(matrix)
+    middle_column = utils.board.middle_column(matrix)
     mark = kwargs["mark"]
 
     if (
@@ -50,7 +50,7 @@ def _move_n(matrix, **kwargs):
     """
     Try to complete the cheap trick.
     """
-    middle_column = utils.middle_column(matrix)
+    middle_column = utils.board.middle_column(matrix)
     mark = kwargs["mark"]
 
     if (
@@ -69,8 +69,6 @@ _MOVE_CATALOGUE = {
     1: _move_1,
     2: _move_2,
     3: _move_2,
-    4: _move_n,
-    5: _move_n,
 }
 
 
@@ -79,8 +77,8 @@ def move(observation, configuration):
     Makes a move based on the `_MOVE_CATALOGUE`.
 
     Args:
-        observation (kaggle_environments.utils.Struct): The observation.
-        configuration (kaggle_environments.utils.Struct): The configuration.
+        observation (kaggle_environments.utils.board.Struct): The observation.
+        configuration (kaggle_environments.utils.board.Struct): The configuration.
 
     Return:
         int: The action.
@@ -89,8 +87,8 @@ def move(observation, configuration):
     mark = observation.mark
     rows = configuration.rows
     columns = configuration.columns
-    matrix = utils.board_to_matrix(board, rows, columns)
-    game_round = utils.game_round(matrix)
+    matrix = utils.board.board_to_matrix(board, rows, columns)
+    game_round = utils.board.game_round(matrix)
 
     move_func = _MOVE_CATALOGUE.get(game_round)
     if move_func:

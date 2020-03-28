@@ -21,7 +21,7 @@ sys.path.append("..")
 from kaggle_environments import make
 from kaggle_environments.core import Environment
 
-from submission import act
+from submission_standalone import act
 
 env = make("connectx")
 
@@ -40,7 +40,7 @@ configuration = env.configuration
 
 act(observation, configuration)
 
-env.run([act, "random"], state=random_state(env, steps=0))
+env.run([act, "negamax"], state=random_state(env, steps=0))
 env.render(mode="ipython", width=500, height=450)
 
 env.play(agents=[None, act])

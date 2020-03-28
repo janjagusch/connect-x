@@ -19,6 +19,10 @@ def minimax(node, max_depth=4, maximize=True, current_depth=None):
         tuple: (Next node to go for, Value of the next node).
     """
     current_depth = current_depth or 0
+
+    node.depth = current_depth
+    node.maximize = maximize
+
     value, terminated = node.value
     if (current_depth == max_depth) or terminated:
         return value
