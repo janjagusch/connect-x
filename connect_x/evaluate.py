@@ -93,7 +93,7 @@ def _evaluate_heuristic(eval_windows):
 
 def _evaluate(eval_windows):
     """
-    Evaluates the board. Calculates a value for the board. and checks whether the game
+    Evaluates the board. Calculates a value for the board and checks whether the game
     has ended.
 
     Args:

@@ -48,8 +48,8 @@ def act(observation, configuration):
     Decides what action to do next.
 
     Args:
-        observation (kaggle_environments.utils.board.Struct): The observation.
-        configuration (kaggle_environments.utils.board.Struct): The configuration.
+        observation (kaggle_environments.utils.Struct): The observation.
+        configuration (kaggle_environments.utils.Struct): The configuration.
 
     Returns:
         int: The action.

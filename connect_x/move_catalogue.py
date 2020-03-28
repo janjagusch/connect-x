@@ -77,8 +77,8 @@ def move(observation, configuration):
     Makes a move based on the `_MOVE_CATALOGUE`.
 
     Args:
-        observation (kaggle_environments.utils.board.Struct): The observation.
-        configuration (kaggle_environments.utils.board.Struct): The configuration.
+        observation (kaggle_environments.utils.Struct): The observation.
+        configuration (kaggle_environments.utils.Struct): The configuration.
 
     Return:
         int: The action.
