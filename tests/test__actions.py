@@ -4,7 +4,8 @@ This module tests the `connect_x.actions` module.
 
 import pytest
 
-from connect_x import actions, utils
+from connect_x import actions
+from connect_x import utils
 
 
 @pytest.mark.parametrize(
@@ -17,7 +18,7 @@ from connect_x import actions, utils
 def test_possible_actions(
     matrix, rows, columns, observation, configuration, possible_actions, to_array
 ):
-    board = utils.matrix_to_board(to_array(matrix))
+    board = utils.board.matrix_to_board(to_array(matrix))
 
     observation.board = board
     configuration.rows = rows
@@ -45,8 +46,8 @@ def test_step(
     new_matrix,
     to_array,
 ):
-    board = utils.matrix_to_board(to_array(matrix))
-    new_board = utils.matrix_to_board(to_array(new_matrix))
+    board = utils.board.matrix_to_board(to_array(matrix))
+    new_board = utils.board.matrix_to_board(to_array(new_matrix))
 
     observation.board = board
     configuration.rows = rows

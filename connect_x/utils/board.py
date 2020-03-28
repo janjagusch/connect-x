@@ -5,6 +5,45 @@ This module contains useful functions for this project.
 import numpy as np
 
 
+MARK_AGNOSTIC_TOKEN_YOU = 1
+MARK_AGNOSTIC_TOKEN_OTHER = 9
+
+
+def board_hash(board, mark):
+    """
+    Returns a string representation of the board.
+
+    Args:
+        board (list): The board state.
+        mark (int): Your token mark.
+
+    Returns:
+        str: The board hash.
+    """
+    return "".join(str(val) for val in mark_agnostic_board(board, mark))
+
+
+def mark_agnostic_board(board, mark):
+    """
+    Makes the board mark agnostic. Replaces your mark with `1` and the other mark with
+    `9`.
+
+    Args:
+        board (list): The board state.
+        mark (int): Your token mark.
+
+    Returns:
+        list: The mark agnostic board.
+    """
+
+    def agnostic(val, mark):
+        if val == 0:
+            return val
+        return MARK_AGNOSTIC_TOKEN_YOU if val == mark else MARK_AGNOSTIC_TOKEN_OTHER
+
+    return [agnostic(val, mark) for val in board]
+
+
 def game_round(matrix):
     """
     Returns in which round the game is.

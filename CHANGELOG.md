@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- Added `connect_x/board_action_map.py`, which provided access to precomputed best actions for boards in the first N turns.
+
 ## 0.3.0
 
 - Set `max_depth=3` in `submission.py`.

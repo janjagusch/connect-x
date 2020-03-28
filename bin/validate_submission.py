@@ -1,4 +1,6 @@
-#! python
+"""
+This module makes sure that the submission file is valid.
+"""
 
 import sys
 
@@ -10,8 +12,11 @@ class ValidationError(Exception):
     Exception that is thrown when validaiting `submission.py` fails.
     """
 
-if __name__ == "__main__":
-        
+
+def main():
+    """
+    Makes sure that the `submission_standalone.py` file is valid.
+    """
     out = sys.stdout
     submission = utils.read_file("submission_standalone.py")
     agent = utils.get_last_callable(submission)
@@ -20,7 +25,7 @@ if __name__ == "__main__":
     env = make("connectx", debug=True)
     env.run([agent, agent])
 
-    if not (env.state[0].status == env.state[1].status == "DONE"):
+    if not env.state[0].status == env.state[1].status == "DONE":
         raise ValidationError(
             "`submission_standalone.py` file is not vaild. ",
             f"agent #1 state: '{env.state[0].status}', ",
@@ -29,3 +34,6 @@ if __name__ == "__main__":
 
     print("`submission_standalone.py` file is valid.")
 
+
+if __name__ == "__main__":
+    main()

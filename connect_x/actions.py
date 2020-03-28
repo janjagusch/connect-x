@@ -19,7 +19,7 @@ def _possible_actions(matrix):
     Returns:
         np.array: The possible actions.
     """
-    filter_ = [(array == 0).any() for array in utils.matrix_columns(matrix)]
+    filter_ = [(array == 0).any() for array in utils.board.matrix_columns(matrix)]
     return np.arange(matrix.shape[1])[filter_]
 
 
@@ -53,11 +53,9 @@ def possible_actions(observation, configuration):
     Returns:
         list: List of possible actions.
     """
-    board = observation.board
-    n_rows = configuration.rows
-    n_cols = configuration.columns
-
-    matrix = utils.board_to_matrix(board, n_rows, n_cols)
+    matrix = utils.board.board_to_matrix(
+        observation.board, configuration.rows, configuration.columns
+    )
     return list(_possible_actions(matrix))
 
 
@@ -74,14 +72,13 @@ def step(observation, configuration, action, mark):
     Returns:
         dict: The new observation.
     """
-    board = observation.board
-    n_rows = configuration.rows
-    n_cols = configuration.columns
 
-    matrix = utils.board_to_matrix(board, n_rows, n_cols)
+    matrix = utils.board.board_to_matrix(
+        observation.board, configuration.rows, configuration.columns
+    )
     new_matrix = _step(matrix, action, mark)
 
-    new_board = utils.matrix_to_board(new_matrix)
+    new_board = utils.board.matrix_to_board(new_matrix)
 
     new_observation = copy(observation)
     new_observation.board = new_board
