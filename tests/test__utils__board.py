@@ -14,28 +14,8 @@ from connect_x.utils import board as board_utils
 @pytest.mark.parametrize(
     "board,mark,mark_agnostic_board",
     [
-        (
-            [
-                [1, 0, 2],
-                1,
-                [
-                    board_utils.MARK_AGNOSTIC_TOKEN_YOU,
-                    0,
-                    board_utils.MARK_AGNOSTIC_TOKEN_OTHER,
-                ],
-            ]
-        ),
-        (
-            [
-                [1, 0, 2],
-                2,
-                [
-                    board_utils.MARK_AGNOSTIC_TOKEN_OTHER,
-                    0,
-                    board_utils.MARK_AGNOSTIC_TOKEN_YOU,
-                ],
-            ]
-        ),
+        ([[1, 0, 2], 1, [board_utils.TOKEN_ME, 0, board_utils.TOKEN_OTHER,],]),
+        ([[1, 0, 2], 2, [board_utils.TOKEN_OTHER, 0, board_utils.TOKEN_ME,],]),
     ],
 )
 def test_mark_agnostic_board(board, mark, mark_agnostic_board):
@@ -145,13 +125,18 @@ def test_matrix_cols(matrix, columns, to_array):
     np.testing.assert_array_equal(board_utils.matrix_columns(to_array(matrix)), columns)
 
 
-@pytest.mark.parametrize("mark,other_mark", [(1, 2), (2, 1), (None, None),])
-def test_other_mark(mark, other_mark):
-    assert board_utils.other_mark(mark) == other_mark
-
-
 @pytest.mark.parametrize(
-    "board,mark,board_hash", [([1, 0, 2], 1, "109"), ([1, 0, 2], 2, "901"),]
+    "mark,other_token",
+    [
+        (board_utils.TOKEN_ME, board_utils.TOKEN_OTHER),
+        (board_utils.TOKEN_OTHER, board_utils.TOKEN_ME),
+        (None, None),
+    ],
 )
-def test_board_hash(board, mark, board_hash):
-    assert board_utils.board_hash(board, mark) == board_hash
+def test_other_token(mark, other_token):
+    assert board_utils.other_token(mark) == other_token
+
+
+def test_matrix_hash(matrix):
+    matrix_hash = board_utils.matrix_hash(matrix)
+    assert isinstance(matrix_hash, str)

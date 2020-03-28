@@ -6,6 +6,7 @@ import pytest
 import numpy as np
 
 from connect_x import evaluate
+from connect_x.utils.board import TOKEN_ME, TOKEN_OTHER
 
 
 # pylint: disable=protected-access
@@ -51,23 +52,37 @@ def test__windows(matrix, window_size, windows, to_array):
 
 
 @pytest.mark.parametrize(
-    "windows,mark,eval_windows",
+    "windows,mark_me,mark_other,eval_windows",
     [
         (
-            [[1, 1], [1, 0], [0, 0], [1, 2], [2, 2]],
-            1,
+            [
+                [TOKEN_ME, TOKEN_ME],
+                [TOKEN_ME, 0],
+                [0, 0],
+                [TOKEN_ME, TOKEN_OTHER],
+                [TOKEN_OTHER, TOKEN_OTHER],
+            ],
+            TOKEN_ME,
+            TOKEN_OTHER,
             [[1, 1], [1, 0], [0, 0], [1, -1], [-1, -1]],
         ),
         (
-            [[1, 1], [1, 0], [0, 0], [1, 2], [2, 2]],
-            2,
+            [
+                [TOKEN_ME, TOKEN_ME],
+                [TOKEN_ME, 0],
+                [0, 0],
+                [TOKEN_ME, TOKEN_OTHER],
+                [TOKEN_OTHER, TOKEN_OTHER],
+            ],
+            TOKEN_OTHER,
+            TOKEN_ME,
             [[-1, -1], [-1, 0], [0, 0], [-1, 1], [1, 1]],
         ),
     ],
 )
-def test__eval_windows(windows, mark, eval_windows, to_array):
+def test__eval_windows(windows, mark_me, mark_other, eval_windows, to_array):
     np.testing.assert_array_equal(
-        evaluate._eval_windows(to_array(windows), mark), eval_windows
+        evaluate._eval_windows(to_array(windows), mark_me, mark_other), eval_windows,
     )
 
 
@@ -105,10 +120,8 @@ def test__evaluate_with_heuristics(eval_windows, to_array):
     assert isinstance(result[1], bool)
 
 
-def test_evaluate(env):
-    observation = env.state[0].observation
-    configuration = env.configuration
-    result = evaluate.evaluate(observation, configuration)
+def test_evaluate(matrix, configuration):
+    result = evaluate.evaluate(matrix, configuration)
     assert isinstance(result, tuple)
     assert len(result) == 2
     assert isinstance(result[0], float)

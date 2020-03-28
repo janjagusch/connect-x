@@ -5,22 +5,22 @@ This module contains useful functions for this project.
 import numpy as np
 
 
-MARK_AGNOSTIC_TOKEN_YOU = 1
-MARK_AGNOSTIC_TOKEN_OTHER = 9
+TOKEN_ME = 1
+TOKEN_OTHER = 9
 
 
-def board_hash(board, mark):
+def matrix_hash(matrix):
     """
-    Returns a string representation of the board.
+    Returns a hash representation of the matrix.
+    Useful for using it as keys in dictionaries.
 
     Args:
-        board (list): The board state.
-        mark (int): Your token mark.
+        matrix (np.array): The board state as matrix.
 
     Returns:
-        str: The board hash.
+        str: The matrix hash.
     """
-    return "".join(str(val) for val in mark_agnostic_board(board, mark))
+    return matrix.tostring().decode("utf8")
 
 
 def mark_agnostic_board(board, mark):
@@ -39,7 +39,7 @@ def mark_agnostic_board(board, mark):
     def agnostic(val, mark):
         if val == 0:
             return val
-        return MARK_AGNOSTIC_TOKEN_YOU if val == mark else MARK_AGNOSTIC_TOKEN_OTHER
+        return TOKEN_ME if val == mark else TOKEN_OTHER
 
     return [agnostic(val, mark) for val in board]
 
@@ -71,20 +71,20 @@ def middle_column(matrix):
     return int(np.floor(columns / 2))
 
 
-def other_mark(mark):
+def other_token(token):
     """
-    Given the mark of a token, returns the other mark.
+    Given a token, returns the other token.
 
     Args:
-        mark (int): The mark of the token.
+        token (int): The token.
 
     Returns:
-        int: The other mark or `None`, when mark is `None`.
+        int: The other token or `None`.
     """
-    if not mark:
+    if not token:
         return None
-    assert mark in (1, 2)
-    return 2 if mark == 1 else 1
+    assert token in (TOKEN_ME, TOKEN_OTHER)
+    return TOKEN_OTHER if token == TOKEN_ME else TOKEN_ME
 
 
 def board_to_matrix(board, n_rows, n_cols):

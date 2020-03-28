@@ -4,7 +4,14 @@ This module contains functions to evaluate environment observations.
 
 import numpy as np
 
-from . import utils
+from .utils.board import (
+    TOKEN_ME,
+    TOKEN_OTHER,
+    matrix_rows,
+    matrix_columns,
+    matrix_diagonals,
+    rolling_window,
+)
 
 
 def _windows(matrix, window_size):
@@ -19,34 +26,31 @@ def _windows(matrix, window_size):
         np.array: The windows of the board.
     """
     windows = []
-    # pylint: disable=bad-continuation
+
     for array in (
-        utils.board.matrix_rows(matrix)
-        + utils.board.matrix_columns(matrix)
-        + utils.board.matrix_diagonals(matrix)
+        matrix_rows(matrix) + matrix_columns(matrix) + matrix_diagonals(matrix)
     ):
-        # pylint: enable=bad-continuation
         if len(array) >= window_size:
-            windows.extend(utils.board.rolling_window(array, window_size))
+            windows.extend(rolling_window(array, window_size))
     return np.array(windows)
 
 
-def _eval_windows(windows, mark):
+def _eval_windows(windows, mark_me, mark_other):
     """
-    Calculates the evaluation windows, depending on the mark of the token.
+    Calculates the evaluation windows.
 
     Args:
         windows (np.array): Array of windows.
-        mark (int): `1` or `2`.
+        mark_me (int): The mark of my player.
+        mark_other (int): The mark of the other player.
 
     Returns:
         np.array: Array of evaluation windows.
     """
-    mark_opponent = 2 if mark == 1 else 1
     eval_windows = np.zeros(windows.shape)
-    eval_windows[windows == mark] = 1
-    eval_windows[windows == mark_opponent] = -1
-    return eval_windows
+    eval_windows[windows == mark_me] = 1
+    eval_windows[windows == mark_other] = -1
+    return eval_windows.astype(int)
 
 
 def _evaluate_victory(eval_windows):
@@ -109,26 +113,20 @@ def _evaluate(eval_windows):
     return _evaluate_heuristic(eval_windows), False
 
 
-def evaluate(observation, configuration):
+def evaluate(matrix, configuration):
     """
     Evaluates an observation.
 
     Args:
-        observation (dict): The observation.
+        matrix (dict): The matrix of the board state.
         configuration (dict): The configuration.
 
     Returns:
         tuple: (The value of the board, Whether the game has ended).
     """
-    mark = observation.mark
-    mark_opponent = utils.board.other_mark(mark)
-
-    matrix = utils.board.board_to_matrix(
-        observation.board, configuration.rows, configuration.columns
-    )
     windows = _windows(matrix, configuration.inarow)
-    eval_windows = _eval_windows(windows, mark)
-    eval_windows_opponent = _eval_windows(windows, mark_opponent)
-    value, done = _evaluate(eval_windows)
-    value_opponent, done_opponent = _evaluate(eval_windows_opponent)
-    return value - value_opponent, any([done, done_opponent])
+    eval_windows_me = _eval_windows(windows, TOKEN_ME, TOKEN_OTHER)
+    eval_windows_other = _eval_windows(windows, TOKEN_OTHER, TOKEN_ME)
+    value_me, done_me = _evaluate(eval_windows_me)
+    value_other, done_other = _evaluate(eval_windows_other)
+    return value_me - value_other, any([done_me, done_other])

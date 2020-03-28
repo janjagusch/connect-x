@@ -28,7 +28,7 @@ def flatten_tree(node):
     Returns:
         dict: The flat tree as a dictionary.
     """
-    key = board_utils.board_hash(node.observation.board, node.observation.mark)
+    key = board_utils.matrix_hash(node.matrix)
     flat_tree = {key: node}
     for child in node.children:
         flat_tree = {**flat_tree, **flatten_tree(child)}
@@ -90,8 +90,13 @@ def main(forecast_depth):
     observation = env.state[0].observation
     configuration = env.configuration
 
-    node_1 = ConnectXNode(observation, configuration)
-    node_2 = ConnectXNode(observation, configuration, mark=1)
+    board = board_utils.mark_agnostic_board(observation.board, observation.mark)
+    matrix = board_utils.board_to_matrix(
+        board, configuration.rows, configuration.columns
+    )
+
+    node_1 = ConnectXNode(matrix, configuration, next_token=board_utils.TOKEN_ME)
+    node_2 = ConnectXNode(matrix, configuration, next_token=board_utils.TOKEN_OTHER)
 
     _LOGGER.info(f"Starting Minimax with max_depth={forecast_depth}...")
     start = datetime.now()

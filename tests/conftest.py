@@ -6,6 +6,8 @@ import pytest
 import numpy as np
 from kaggle_environments import make
 
+from connect_x.utils.board import board_to_matrix
+
 
 @pytest.fixture(name="to_array")
 def to_array_():
@@ -39,3 +41,11 @@ def observation_(env):
     Connectx observation.
     """
     return env.state[0].observation
+
+
+@pytest.fixture(name="matrix", scope="function")
+def matrix_(observation, configuration):
+    """
+    Board matrix.
+    """
+    return board_to_matrix(observation.board, configuration.rows, configuration.columns)

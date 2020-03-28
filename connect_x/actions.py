@@ -3,13 +3,12 @@ This module provides functions to determine possible actions given an observatio
 and execute those actions.
 """
 
-from copy import copy
 import numpy as np
 
 from . import utils
 
 
-def _possible_actions(matrix):
+def possible_actions(matrix):
     """
     Returns all possible actions you can take from a matrix state.
 
@@ -17,20 +16,20 @@ def _possible_actions(matrix):
         matrix (np.array): The board matrix.
 
     Returns:
-        np.array: The possible actions.
+        list: The possible actions.
     """
     filter_ = [(array == 0).any() for array in utils.board.matrix_columns(matrix)]
-    return np.arange(matrix.shape[1])[filter_]
+    return list(np.arange(matrix.shape[1])[filter_])
 
 
-def _step(matrix, action, mark):
+def step(matrix, action, token):
     """
-    Applies an action with a mark to a matrix.
+    Throws a token into a column of the board.
 
     Args:
         matrix (np.array): The board matrix.
         action (int): The column index where the token should be placed.
-        mark (int): The mark of the token.
+        token (int): The token.
 
     Returns:
         np.array: The new token matrix.
@@ -38,49 +37,5 @@ def _step(matrix, action, mark):
     col = matrix[:, action]
     row = np.argwhere(col == 0).max()
     new_matrix = matrix.copy()
-    new_matrix[row, action] = mark
+    new_matrix[row, action] = token
     return new_matrix
-
-
-def possible_actions(observation, configuration):
-    """
-    Lists all possible actions that can be taken.
-
-    Args:
-        observation (dict): The observation.
-        configuration (dict): The configuration.
-
-    Returns:
-        list: List of possible actions.
-    """
-    matrix = utils.board.board_to_matrix(
-        observation.board, configuration.rows, configuration.columns
-    )
-    return list(_possible_actions(matrix))
-
-
-def step(observation, configuration, action, mark):
-    """
-    Executes an action and returns the new observation.
-
-    Args:
-        observation (dict): The observation.
-        configuration (dict): The configuration.
-        action (int): The index of the column where you want to insert the token.
-        mark (int): The mark of the token.
-
-    Returns:
-        dict: The new observation.
-    """
-
-    matrix = utils.board.board_to_matrix(
-        observation.board, configuration.rows, configuration.columns
-    )
-    new_matrix = _step(matrix, action, mark)
-
-    new_board = utils.board.matrix_to_board(new_matrix)
-
-    new_observation = copy(observation)
-    new_observation.board = new_board
-
-    return new_observation
