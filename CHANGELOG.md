@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+- The project now works completely mark independent and matrix based.
+
 ## 0.4.1
 
 - Fixed wrong file name in `.travis.yml`.
