@@ -1,4 +1,6 @@
-#! python
+"""
+This module makes sure that therer are no missing `__init__.py` files in the package.
+"""
 
 import os
 
@@ -37,6 +39,6 @@ def find_missing_init(file_path):
 
 
 if __name__ == "__main__":
-    missing_init = find_missing_init("connect_x")
-    if len(missing_init) > 0:
-        raise MissingInitError("__init__.py is missing in: {}".format(missing_init))
+    MISSING_INIT = find_missing_init("connect_x")
+    if len(MISSING_INIT) > 0:
+        raise MissingInitError("__init__.py is missing in: {}".format(MISSING_INIT))
