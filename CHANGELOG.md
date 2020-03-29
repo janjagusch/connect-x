@@ -1,8 +1,9 @@
 # Changelog
 
-## 0.4.2
+## 0.5.0
 
 - The project now works completely mark independent and matrix based.
+- The precomputed best actions now have a depth of 8.
 
 ## 0.4.1
 
