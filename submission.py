@@ -4,9 +4,9 @@ This module contains the submissoin for the Kaggle competition.
 
 from connect_x.minimax import minimax, ConnectXNode
 from connect_x.move_catalogue import move
-from connect_x.board_action_map import (
+from connect_x.matrix_action_map import (
     FORECAST_DEPTH as PRECOMPUTED_DEPTH,
-    BOARD_ACTION_MAP,
+    MATRIX_ACTION_MAP,
 )
 from connect_x.utils.board import (
     game_round,
@@ -29,7 +29,7 @@ def _rule_based_action(matrix, configuration):
 # pylint: disable=unused-argument
 def _precomputed_action(matrix, configuration):
     if PRECOMPUTED_DEPTH > (game_round(matrix) + FORECAST_DEPTH):
-        return BOARD_ACTION_MAP[matrix_hash(matrix)]
+        return MATRIX_ACTION_MAP[matrix_hash(matrix)]
     return None
 
 
