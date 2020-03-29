@@ -1,5 +1,5 @@
 """
-This module creates the `connect_x/board_action_map` module.
+This module creates the `connect_x/matrix_action_map` module.
 """
 
 from datetime import datetime
@@ -53,28 +53,30 @@ def best_action(node):
     )
 
 
-def write_module(board_action_map, forecast_depth):
+def write_module(matrix_action_map, forecast_depth):
     """
-    Writes the `connect_x/board_action_map` module.
+    Writes the `connect_x/matrix_action_map` module.
 
     Args:
-        board_action_map (dict): The board action map.
+        matrix_action_map (dict): The board action map.
         forecast_depth (int): How many turns were forecasted to produce the actions.
     """
-    board_action_map_binary = gzip.compress(
-        json.dumps(board_action_map).encode("ascii")
+    matrix_action_map_binary = gzip.compress(
+        json.dumps(matrix_action_map).encode("ascii")
     )
-    with open("connect_x/board_action_map.py", "w") as file_pointer:
+    with open("connect_x/matrix_action_map.py", "w") as file_pointer:
         file_pointer.write(
-            '"""\nThis module contains pre-calculated board actions.\n"""\n'
+            '"""\nThis module contains pre-calculated matrix actions.\n"""\n'
         )
         file_pointer.write("import gzip\nimport json\n\n")
         file_pointer.write(f"FORECAST_DEPTH = {forecast_depth}\n\n")
         file_pointer.write("# pylint: disable=line-too-long\n")
-        file_pointer.write(f"_BOARD_ACTION_MAP_BINARY = {board_action_map_binary}\n\n")
+        file_pointer.write(
+            f"_MATRIX_ACTION_MAP_BINARY = {matrix_action_map_binary}\n\n"
+        )
         file_pointer.write("# pylint: enable=line-too-long\n")
         file_pointer.write(
-            "BOARD_ACTION_MAP = json.loads(gzip.decompress(_BOARD_ACTION_MAP_BINARY))\n"
+            "MATRIX_ACTION_MAP = json.loads(gzip.decompress(_MATRIX_ACTION_MAP_BINARY))\n"
         )
 
 
@@ -129,4 +131,4 @@ def main(forecast_depth):
 
 if __name__ == "__main__":
 
-    main(7)
+    main(8)
