@@ -34,9 +34,9 @@ lint_pylint: test_missing_init
 
 lint: lint_black lint_pylint clean
 
-board_action_map:
-	@echo "Buiding connect_x/board_action_map.py ..."
-	@poetry run python bin/create_board_action_map.py
+matrix_action_map:
+	@echo "Buiding connect_x/matrix_action_map.py ..."
+	@poetry run python bin/create_matrix_action_map.py
 	@make format
 
 standalone_submission:

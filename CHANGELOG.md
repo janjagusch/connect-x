@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0
+
+- The project now works completely mark independent and matrix based.
+- The precomputed best actions now have a depth of 8.
+
+## 0.4.1
+
+- Fixed wrong file name in `.travis.yml`.
+
 ## 0.4.0
 
 - Added `connect_x/board_action_map.py`, which provided access to precomputed best actions for boards in the first N turns.

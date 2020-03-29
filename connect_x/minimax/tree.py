@@ -4,7 +4,10 @@ This module provides tree structures for the Minimax algorithm.
 
 from connect_x.actions import possible_actions, step
 from connect_x.evaluate import evaluate
-from connect_x.utils.board import other_mark
+from connect_x.utils.board import (
+    other_token,
+    TOKEN_ME,
+)
 
 
 class TreeNode:
@@ -28,28 +31,28 @@ class ConnectXNode(TreeNode):
     A tree node for Connect X.
 
     Args:
-        observation (kaggle_environments.utils.Struct): The observation.
+        matrix (np.array): The board state as matrix.
         configuration (kaggle_environments.utils.Struct): The configuration.
         action (int): The index of the column where you inserted the token.
-        mark (int): The mark of the token.
-        parent (TreeNode): The parent node.
+        next_token (int): The next token (mark independent).
+        parent (ConnectXNode): The parent node.
         children (list): The child nodes.
     """
 
     def __init__(
         self,
-        observation,
+        matrix,
         configuration,
         action=None,
-        mark=None,
+        next_token=None,
         parent=None,
         children=None,
     ):
         super().__init__(parent, children)
-        self.observation = observation
+        self.matrix = matrix
         self.configuration = configuration
         self.action = action
-        self.mark = mark
+        self.next_token = next_token
 
     @property
     def possible_actions(self):
@@ -59,7 +62,7 @@ class ConnectXNode(TreeNode):
         Returns:
             list: List of possible actions.
         """
-        return possible_actions(self.observation, self.configuration)
+        return possible_actions(self.matrix)
 
     def step(self, action):
         """
@@ -71,13 +74,13 @@ class ConnectXNode(TreeNode):
         Returns:
             ConnectXNode: The new child node.
         """
-        mark = other_mark(self.mark) or self.observation.mark
+        next_token = self.next_token or TOKEN_ME
         return self.__class__(
-            observation=step(self.observation, self.configuration, action, mark),
+            matrix=step(self.matrix, action, next_token),
             configuration=self.configuration,
             action=action,
+            next_token=other_token(next_token),
             parent=self,
-            mark=mark,
         )
 
     def make_children(self):
@@ -95,4 +98,4 @@ class ConnectXNode(TreeNode):
         """
         Calculates the value of the node.
         """
-        return evaluate(self.observation, self.configuration)
+        return evaluate(self.matrix, self.configuration)
