@@ -76,7 +76,8 @@ def write_module(matrix_action_map, forecast_depth):
         )
         file_pointer.write("# pylint: enable=line-too-long\n")
         file_pointer.write(
-            "MATRIX_ACTION_MAP = json.loads(gzip.decompress(_MATRIX_ACTION_MAP_BINARY))\n"
+            "MATRIX_ACTION_MAP = json.loads"
+            "(gzip.decompress(_MATRIX_ACTION_MAP_BINARY))\n"
         )
 
 

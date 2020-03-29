@@ -5,7 +5,6 @@ This module contains hard-coded rules for Connect X.
 from .utils.board import (
     middle_column,
     game_round,
-    board_to_matrix,
     TOKEN_ME,
 )
 
