@@ -6,7 +6,7 @@ import pytest
 import numpy as np
 from kaggle_environments import make
 
-from connect_x.utils import board_converter
+from connect_x.utils import converter
 
 
 @pytest.fixture(name="to_array")
