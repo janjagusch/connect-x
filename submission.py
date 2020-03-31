@@ -1,5 +1,5 @@
 """
-This module contains the submissoin for the Kaggle competition.
+This module contains the submission for the Kaggle competition.
 """
 
 from datetime import datetime
