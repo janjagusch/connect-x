@@ -5,26 +5,35 @@ The implementation is taken from here: https://github.com/aimacode/aima-python/b
 
 import functools
 
+import numpy as np
+
 
 class StateValueCache:
     """
     A cache that stores the value for every state.
     """
-    
+
     def __init__(self, func, cache=None):
         functools.update_wrapper(self, func)
         self.func = func
         self.cache = cache or {}
-        
+        self.cache_calls = 0
+
     def _cached_value(self, key):
         if key is not None:
-            return self.cache.get(key)
+            value = self.cache.get(key)
+            if value is not None:
+                self.cache_calls += 1
+            return value
         return None
 
     def _cache_value(self, key, value):
         if key is not None:
             self.cache[key] = value
-        
+
+    def reset_cache(self):
+        self.cache = {}
+
     def __call__(self, *args, **kwargs):
         key = kwargs.get("state").state_hash
         value = self._cached_value(key) or self.func(*args, **kwargs)
@@ -32,54 +41,71 @@ class StateValueCache:
         return value
 
 
-def minimax(state, game, max_depth=4, maximize=True, eval_func=None, order_actions_func=None)
+def is_terminated(state, game, player):
+    """
+    Returns the value of the game state and whether the game has terminated.
+    """
+    if game.is_win(state, player):
+        return np.inf, True
+    if game.is_win(state, 1 - player):
+        return -np.inf, True
+    if game.is_draw(state):
+        return 0, True
+    return None, False
 
 
-
-def minimax(state, game, max_depth=4, eval_func=None, order_actions_func=None, maximize=True):
-
-    player = game.to_move(state)
-
-    @StateValueCache
-    def max_value(state, alpha, beta, depth):
-        value, terminated = eval_func(state)
-        if terminated or depth > max_depth:
-            return value
-        value = -np.inf
-        for action in order_actions_func(game.actions(state)):
-            value = max(
-                value, min_value(game.result(state, action), alpha, beta, depth + 1)
-            )
-            if value >= beta:
-                return value
-            alpha = max(alpha, value)
-        return value
-
-    @StateValueCache
-    def min_value(state, alpha, beta, depth):
-
-        value, terminated = eval_func(state)
-        if terminated or depth > max_depth:
-            return value
-        value = np.inf
-        for action in order_actions_func(game.actions(state)):
-            value = min(
-                value, max_value(game.result(state, action), alpha, beta, depth + 1)
-            )
-            if value <= alpha:
-                return value
-            beta = min(beta, value)
-        return value
-
-    # Body of alpha_beta_cutoff_search starts here:
-    eval_func = eval_func or (lambda state: game.utility(state, player))
+def negamax(
+    game,
+    state,
+    depth,
+    player,
+    heuristic_func,
+    order_actions_func=None,
+    return_cache=False,
+):
+    """
+    """
     order_actions_func = order_actions_func or (lambda actions: actions)
-    best_score = -np.inf
+    alpha = -np.inf
     beta = np.inf
-    best_action = None
-    for action in order_actions_func(game.actions(state)):
-        value = min_value(game.result(state, action), best_score, beta, 1)
-        if value > best_score:
-            best_score = value
-            best_action = action
-    return best_action
+
+    @StateValueCache
+    def _negamax(state, game, depth, alpha, beta, maximize):
+        value, terminated = is_terminated(state, game, player)
+        if terminated:
+            return value * maximize
+        if depth == 0:
+            value = heuristic_func(state, game, player) * maximize
+            return value
+
+        actions = game.valid_actions(state)
+        actions = order_actions_func(actions)
+
+        value = -np.inf
+
+        for action in actions:
+            value = max(
+                value,
+                -_negamax(
+                    state=game.do(state, action),
+                    game=game,
+                    depth=depth - 1,
+                    alpha=-beta,
+                    beta=-alpha,
+                    maximize=-maximize,
+                ),
+            )
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
+
+        return value
+
+    _negamax.reset_cache()
+    value = _negamax(
+        state=state, game=game, depth=depth, alpha=alpha, beta=beta, maximize=1
+    )
+
+    if return_cache:
+        return _negamax
+    return value
