@@ -41,4 +41,4 @@ def order_actions(actions):
     return np.array(actions)[order]
 
 
-DEPTH = 4
+DEPTH = 3
