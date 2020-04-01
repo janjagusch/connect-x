@@ -106,8 +106,7 @@ def negamax(
         if terminated:
             return value * maximize
         if depth == 0:
-            value = heuristic_func(state, player) * maximize
-            return value
+            return heuristic_func(state, player) * maximize
 
         actions = game.valid_actions(state)
         actions = order_actions_func(actions)
