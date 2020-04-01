@@ -2,8 +2,7 @@
 This module serves the agent through a Flask web API.
 """
 
-from flask import Flask
-from flask import request
+from flask import Flask, request
 from kaggle_environments.utils import Struct
 
 from agent import act
