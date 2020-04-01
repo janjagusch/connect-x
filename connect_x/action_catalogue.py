@@ -47,6 +47,15 @@ _ACTION_CATALOGUE = {
 
 
 def get_action(state):
+    """
+    Returns an action from the _ACTION_CATALOGUE, given the state.
+
+    Args:
+        state (connect_x.game.connect_x.ConnectXState): The state.
+
+    Returns:
+        int: The action.
+    """
     matrix = bitmaps_to_matrix(state.bitmaps)
     action_func = _ACTION_CATALOGUE.get(state.counter)
     if action_func:

@@ -1,6 +1,7 @@
 """
 This module implements the Minimax search algorithm with Alpha-Beta pruning.
-The implementation is taken from here: https://github.com/aimacode/aima-python/blob/master/games.py
+The implementation is taken from here:
+https://github.com/aimacode/aima-python/blob/master/games.py
 """
 
 import functools
@@ -32,6 +33,9 @@ class StateValueCache:
             self.cache[key] = value
 
     def reset_cache(self):
+        """
+        Resets the cache.
+        """
         self.cache = {}
 
     def __call__(self, *args, **kwargs):
@@ -44,6 +48,14 @@ class StateValueCache:
 def is_terminated(state, game, player):
     """
     Returns the value of the game state and whether the game has terminated.
+
+    Args:
+        state (connect_x.game.connect_x.ConnectXState): The state.
+        game (connect_x.game.connect_x.ConnectXGame): The game.
+        player (int): The player (1 or 0).
+
+    Returns:
+        tuple: The value of the state for the player and whether the game has ended.
     """
     if game.is_win(state, player):
         return np.inf, True
@@ -64,7 +76,26 @@ def negamax(
     return_cache=False,
 ):
     """
+    Applies the Negamax algorithm to the game to determine the next best action for
+    the player, given the state.
+
+    Args:
+        game (connect_x.game.connect_x.ConnectXGame): The game.
+        state (connect_x.game.connect_x.ConnectXState): The state.
+        depth (int): The maximum depth of the Negamax tree.
+        player (int): The player (1 or 0).
+        heuristic_func (callable, optional): The heuristic function for the state when
+            the tree can not be resolved up to a terminal leaf.
+        order_actions_func (callable, optional): The function that determines in which
+            order the actions will be evaluated.
+        return_cache (bool, optional): Whether to return the entire cache, instead of
+            just the value.
+
+    Returns:
+        float: When `return_cache=False`.
+        dict: When `return_cache=True`.
     """
+    heuristic_func = heuristic_func or (lambda state, player: 0)
     order_actions_func = order_actions_func or (lambda actions: actions)
     alpha = -np.inf
     beta = np.inf
@@ -75,7 +106,7 @@ def negamax(
         if terminated:
             return value * maximize
         if depth == 0:
-            value = heuristic_func(state, game, player) * maximize
+            value = heuristic_func(state, player) * maximize
             return value
 
         actions = game.valid_actions(state)

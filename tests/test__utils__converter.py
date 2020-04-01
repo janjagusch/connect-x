@@ -34,7 +34,7 @@ def board_example_(matrix_example):
 
 
 @pytest.fixture(name="bitmaps_example")
-def bitmaps_example():
+def bitmaps_example_():
     """
     Example from: https://github.com/denkspuren/BitboardC4/blob/master/
     BitboardDesign.md#using-two-longs-to-encode-the-board.
@@ -62,12 +62,19 @@ def test_matrix_to_board(matrix, board, to_array):
     assert converter.matrix_to_board(to_array(matrix)) == board
 
 
-def test_board_to_bitmaps_empty(board):
-    assert converter.board_to_bitmaps(board) == [0, 0]
+def test_board_to_bitmaps_empty(board, configuration):
+    assert converter.board_to_bitmaps(
+        board, configuration.rows, configuration.columns
+    ) == [0, 0]
 
 
-def test_board_to_bitmaps_example(board_example, bitmaps_example):
-    assert converter.board_to_bitmaps(board_example) == bitmaps_example
+def test_board_to_bitmaps_example(board_example, bitmaps_example, configuration):
+    assert (
+        converter.board_to_bitmaps(
+            board_example, configuration.rows, configuration.columns
+        )
+        == bitmaps_example
+    )
 
 
 def test_bitmaps_to_board_empty(board):

@@ -45,6 +45,9 @@ def observation_(env):
 
 @pytest.fixture(name="board", scope="function")
 def board_(observation):
+    """
+    Board.
+    """
     return observation.board
 
 
@@ -53,11 +56,14 @@ def matrix_(observation, configuration):
     """
     Board matrix.
     """
-    return board_converter.board_to_matrix(
+    return converter.board_to_matrix(
         observation.board, configuration.rows, configuration.columns
     )
 
 
 @pytest.fixture(name="bitmaps", scope="function")
 def bitmaps_(board):
-    return board_converter.board_to_bitmaps(board, 1, 2)
+    """
+    Bitmaps.
+    """
+    return converter.board_to_bitmaps(board, 1, 2)

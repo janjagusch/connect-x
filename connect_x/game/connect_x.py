@@ -7,7 +7,7 @@ from copy import deepcopy
 import numpy as np
 from kaggle_environments.utils import Struct
 
-from .game import Game, GameState
+from connect_x.game.game import Game, GameState
 from connect_x.utils.converter import (
     board_to_bitmaps,
     bitmaps_to_matrix,
@@ -17,37 +17,72 @@ from connect_x.utils.converter import (
 
 class ConnectXState(GameState):
     """
+    This class represent a game state for Connect-X.
+
+    Args:
+        bitmaps (list): The board, represented as a list of two integers.
+        action_log (list): The log of previously executed actions.
+        height (list): The height of each column in the board,
+            in bitmap representation.
+        counter (int): The number of turn already played.
+        mark (int): The mark of the player.
+
     """
 
-    def __init__(self, bitmaps, action_log, height, counter, mark):
+    def __init__(self, bitmaps, action_log=None, height=None, counter=None, mark=None):
         self.bitmaps = bitmaps
-        self._action_log = action_log
-        self._height = height
-        self.counter = counter
+        self.action_log = action_log or []
+        self.height = height or self._update_height(bitmaps)
+        self.counter = counter or self._update_counter(bitmaps)
         self.mark = mark
 
     @classmethod
-    def from_observation(cls, observation):
-        obj = cls(
-            board_to_bitmaps(observation.board), [], None, None, observation.mark,
+    def from_observation(cls, observation, rows, columns):
+        """
+        Creates a ConnectXState from an observation.
+
+        Args:
+            observation (kaggle_environments.utils.Struct): The observation.
+            rows (int): The number of rows.
+            columns (int): The number of columns.
+
+        Returns:
+            ConnectXState: The state.
+        """
+        assert rows == 6, "The state only supports rows=6 for now."
+        assert columns == 7, "The game only supports columns=7 for now."
+        return cls(
+            bitmaps=board_to_bitmaps(observation.board, rows, columns),
+            mark=observation.mark,
         )
-        obj._height = obj._update_height()
-        obj.counter = obj._update_counter()
-        return obj
 
     def to_observation(self):
+        """
+        Creates an observation from the state.
+
+        Returns:
+            kaggle_environments.utils.Struct: The observation.
+        """
         return Struct(board=bitmaps_to_board(self.bitmaps), mark=self.mark,)
 
-    def _update_height(self):
-        additional_height = (bitmaps_to_matrix(self.bitmaps) != 0).sum(axis=0)
+    @staticmethod
+    def _update_height(bitmaps):
+        additional_height = (bitmaps_to_matrix(bitmaps) != 0).sum(axis=0)
         base_height = np.array([i * 7 for i in range(7)])
         return list(base_height + additional_height)
 
-    def _update_counter(self):
-        return bin(self.bitmaps[0])[2:].count("1") + bin(self.bitmaps[1])[2:].count("1")
+    @staticmethod
+    def _update_counter(bitmaps):
+        return bin(bitmaps[0])[2:].count("1") + bin(bitmaps[1])[2:].count("1")
 
     @property
     def state_hash(self):
+        """
+        Creates a unique hash for the state.
+
+        Returns:
+            int: The state hash.
+        """
         return 2 * self.bitmaps[0] + self.bitmaps[1]
 
     def __repr__(self):
@@ -55,15 +90,19 @@ class ConnectXState(GameState):
         return f"{self.__class__.__name__}({attr_str})"
 
     def __eq__(self, other):
-        return (
-            self.bitmaps == other.bitmaps
-            and self._action_log == other._action_log
-            and self.mark == other.mark
-        )
+        return self.bitmaps == other.bitmaps
 
 
 class ConnectXGame(Game):
     """
+    This class represents the Connect-X game.
+
+    Args:
+        rows (int): The number of rows.
+        columns (int): The number of columns.
+        x (int): The number of tokens connected to win.
+        timeout (int): The timeout for the turn.
+        steps (int): The maximum number of steps.
     """
 
     _STATE_CLS = ConnectXState
@@ -77,11 +116,20 @@ class ConnectXGame(Game):
         self.x = 4
         self._timeout = timeout
         self._steps = steps
-        self._ACTIONS = range(columns)
-        self._TOP = int("_".join("1000000" for _ in range(columns)), 2)
+        self._actions = range(columns)
+        self._top = int("_".join("1000000" for _ in range(columns)), 2)
 
     @classmethod
     def from_configuration(cls, configuration):
+        """
+        Creates a game from a configuration.
+
+        Args:
+            configuration (kaggle_environments.utils.Struct): The configuration.
+
+        Returns:
+            ConnectXGame: The game.
+        """
         return cls(
             rows=configuration.rows,
             columns=configuration.columns,
@@ -91,6 +139,12 @@ class ConnectXGame(Game):
         )
 
     def to_configuration(self):
+        """
+        Creates a configuration from a game.
+
+        Returns:
+            kaggle_environments.utils.Struct: The configuration.
+        """
         return Struct(
             rows=self.rows,
             columns=self.columns,
@@ -102,52 +156,44 @@ class ConnectXGame(Game):
     def valid_actions(self, state):
         return [
             action
-            for action in self._ACTIONS
-            if not self._TOP & (1 << state._height[action])
+            for action in self._actions
+            if not self._top & (1 << state.height[action])
         ]
 
     def do(self, state, action, inplace=False):
-        action_bit = 1 << state._height[action]
+        action_bit = 1 << state.height[action]
         if not inplace:
             state = deepcopy(state)
         state.bitmaps[state.counter % 2] ^= action_bit
-        state._height[action] += 1
-        state._action_log.append(action)
+        state.height[action] += 1
+        state.action_log.append(action)
         state.counter += 1
         return state
 
     def undo(self, state, inplace=False):
-        action = state._action_log[-1]
-        action_bit = 1 << (state._height[action] - 1)
+        action = state.action_log[-1]
+        action_bit = 1 << (state.height[action] - 1)
         if not inplace:
             state = deepcopy(state)
         state.bitmaps[(state.counter - 1) % 2] ^= action_bit
-        state._height[action] -= 1
-        state._action_log.pop(-1)
+        state.height[action] -= 1
+        state.action_log.pop(-1)
         state.counter -= 1
         return state
 
-    def connected(self, state, player, x):
-        """
-        Returns how many times x are connected in the state of player.
-        """
+    def is_win(self, state, player):
         directions = [1, 6, 7, 8]
 
-        def _connected(bitmap, direction, x):
-            assert x > 0
-            return bin(
-                np.bitwise_and.reduce([bitmap >> i * direction for i in range(x)])
-            )[2:].count("1")
+        # pylint: disable=no-member
+        def _is_win(bitmap, direction, x):
+            return np.bitwise_and.reduce([bitmap >> i * direction for i in range(x)])
 
-        return np.array(
-            [
-                _connected(state.bitmaps[player], direction, x)
-                for direction in directions
-            ]
-        ).sum()
+        # pylint: enable=no-member
 
-    def is_win(self, state, player):
-        return bool(self.connected(state, player, self.x))
+        return any(
+            _is_win(state.bitmaps[player], direction, self.x)
+            for direction in directions
+        )
 
     def is_draw(self, state):
         return not self.valid_actions(state)
@@ -159,4 +205,7 @@ class ConnectXGame(Game):
         )
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(rows={self.rows}, columns={self.columns}, x={self.x})"
+        return (
+            f"{self.__class__.__name__}(rows={self.rows}, "
+            f"columns={self.columns}, x={self.x})"
+        )
