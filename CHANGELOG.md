@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased Changes
+
+- Added benchmarking environment in `/benchmark`.
+- Fixed logging mistake in `submission.py`.
+
 ## 0.6.0
 
 - The project now represents boards as bitmaps and uses caching during the Minimax algorithm.
