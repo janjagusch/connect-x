@@ -34,7 +34,7 @@ def _planned_action(game, state):
     valid_actions = order_actions(game.valid_actions(state))
     valid_states = [game.do(state, action) for action in valid_actions]
     values = [cache.cache.get(state.state_hash, np.inf) * -1 for state in valid_states]
-    _LOGGER.debug({action: value for action, value in zip(valid_actions, values)})
+    _LOGGER.debug(zip(valid_actions, values))
     return valid_actions[np.argmax(values)]
 
 
@@ -51,7 +51,9 @@ def act(observation, configuration):
     """
     start = datetime.now()
     game = ConnectXGame.from_configuration(configuration)
-    state = ConnectXState.from_observation(observation)
+    state = ConnectXState.from_observation(
+        observation, configuration.rows, configuration.columns
+    )
     action = _catalogued_action(state) or _planned_action(game, state)
     end = datetime.now()
     _LOGGER.info(f"Action selected: '{action}'.")
