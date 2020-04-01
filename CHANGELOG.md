@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+- The project now represents boards as bitmaps and uses caching during the Minimax algorithm.
+
 ## 0.5.0
 
 - The project now works completely mark independent and matrix based.

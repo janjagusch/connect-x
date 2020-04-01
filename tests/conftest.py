@@ -6,7 +6,7 @@ import pytest
 import numpy as np
 from kaggle_environments import make
 
-from connect_x.utils.board import board_to_matrix
+from connect_x.utils import converter
 
 
 @pytest.fixture(name="to_array")
@@ -43,9 +43,27 @@ def observation_(env):
     return env.state[0].observation
 
 
+@pytest.fixture(name="board", scope="function")
+def board_(observation):
+    """
+    Board.
+    """
+    return observation.board
+
+
 @pytest.fixture(name="matrix", scope="function")
 def matrix_(observation, configuration):
     """
     Board matrix.
     """
-    return board_to_matrix(observation.board, configuration.rows, configuration.columns)
+    return converter.board_to_matrix(
+        observation.board, configuration.rows, configuration.columns
+    )
+
+
+@pytest.fixture(name="bitmaps", scope="function")
+def bitmaps_(board):
+    """
+    Bitmaps.
+    """
+    return converter.board_to_bitmaps(board, 1, 2)

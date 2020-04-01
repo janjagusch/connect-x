@@ -1,45 +1,41 @@
 """
-This module contains the submissoin for the Kaggle competition.
+This module contains the submission for the Kaggle competition.
 """
 
-from connect_x.minimax import minimax, ConnectXNode
-from connect_x.move_catalogue import move
-from connect_x.matrix_action_map import (
-    FORECAST_DEPTH as PRECOMPUTED_DEPTH,
-    MATRIX_ACTION_MAP,
-)
-from connect_x.utils.board import (
-    game_round,
-    mark_agnostic_board,
-    matrix_hash,
-    board_to_matrix,
-)
+from datetime import datetime
+
+import numpy as np
+
+from connect_x.game import ConnectXGame, ConnectXState
+from connect_x.action_catalogue import get_action
+from connect_x.minimax import negamax
+from connect_x.config import heuristic, order_actions, DEPTH
+
 from connect_x.utils.logger import setup_logger
 
 
 _LOGGER = setup_logger(__name__)
 
-FORECAST_DEPTH = 3
+
+def _catalogued_action(state):
+    return get_action(state)
 
 
-def _rule_based_action(matrix, configuration):
-    return move(matrix, configuration)
-
-
-# pylint: disable=unused-argument
-def _precomputed_action(matrix, configuration):
-    if PRECOMPUTED_DEPTH > (game_round(matrix) + FORECAST_DEPTH):
-        return MATRIX_ACTION_MAP[matrix_hash(matrix)]
-    return None
-
-
-# pylint: enable=unused-argument
-
-
-def _forecasted_action(matrix, configuration):
-    node = ConnectXNode(matrix, configuration)
-    next_node, _ = minimax(node, max_depth=FORECAST_DEPTH)
-    return next_node.action
+def _planned_action(game, state):
+    cache = negamax(
+        game=game,
+        state=state,
+        depth=DEPTH,
+        heuristic_func=heuristic,
+        order_actions_func=order_actions,
+        player=state.mark - 1,
+        return_cache=True,
+    )
+    valid_actions = order_actions(game.valid_actions(state))
+    valid_states = [game.do(state, action) for action in valid_actions]
+    values = [cache.cache.get(state.state_hash, np.inf) * -1 for state in valid_states]
+    _LOGGER.debug(zip(valid_actions, values))
+    return valid_actions[np.argmax(values)]
 
 
 def act(observation, configuration):
@@ -53,11 +49,14 @@ def act(observation, configuration):
     Returns:
         int: The action.
     """
-    board = mark_agnostic_board(observation.board, observation.mark)
-    matrix = board_to_matrix(board, configuration.rows, configuration.columns)
-    action = (
-        _rule_based_action(matrix, configuration)
-        or _precomputed_action(matrix, configuration)
-        or _forecasted_action(matrix, configuration)
+    start = datetime.now()
+    game = ConnectXGame.from_configuration(configuration)
+    state = ConnectXState.from_observation(
+        observation, configuration.rows, configuration.columns
     )
+    action = _catalogued_action(state) or _planned_action(game, state)
+    end = datetime.now()
+    _LOGGER.info(f"Action selected: '{action}'.")
+    _LOGGER.debug(f"Time taken: {end - start}.")
+
     return int(action)
