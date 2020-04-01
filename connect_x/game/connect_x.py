@@ -29,12 +29,12 @@ class ConnectXState(GameState):
 
     """
 
-    def __init__(self, bitmaps, action_log=None, height=None, counter=None, mark=None):
+    def __init__(self, bitmaps, mark, action_log=None, height=None, counter=None):
         self.bitmaps = bitmaps
+        self.mark = mark
         self.action_log = action_log or []
         self.height = height or self._update_height(bitmaps)
         self.counter = counter or self._update_counter(bitmaps)
-        self.mark = mark
 
     @classmethod
     def from_observation(cls, observation, rows, columns):
@@ -200,9 +200,7 @@ class ConnectXGame(Game):
 
     @property
     def initial(self):
-        return self._STATE_CLS(
-            [0, 0], [], {col: col * 7 for col in range(self.columns)}, 0, 1
-        )
+        return self._STATE_CLS(bitmaps=[0, 0], mark=1,)
 
     def __repr__(self):
         return (
