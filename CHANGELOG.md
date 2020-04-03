@@ -4,7 +4,7 @@
 
 - Added benchmarking environment in `/benchmark`.
 - Fixed logging mistake in `submission.py`.
-- Added performance benchmarking environment in `/notebooks`.
+- Added processing time benchmarking tool in `/notebooks`.
 
 ## 0.6.0
 
