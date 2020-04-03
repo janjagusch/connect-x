@@ -1,0 +1,25 @@
+#! /bin/bash
+
+# Downloads the test sets from http://blog.gamesolver.org.
+
+
+TestSetArray=(
+    "Test_L3_R1"
+    "Test_L2_R1"
+    "Test_L2_R2"
+    "Test_L1_R1"
+    "Test_L1_R2"
+    "Test_L1_R3"
+)
+
+request_test_set() {
+    test_set="${1}"
+    wget "http://blog.gamesolver.org/data/${test_set}" \
+        --quiet \
+        --output-document="data/test_sets/${test_set}"
+}
+
+
+for test_set in ${TestSetArray[*]}; do
+    request_test_set "${test_set}"
+done
