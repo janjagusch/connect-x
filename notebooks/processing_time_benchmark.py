@@ -20,6 +20,7 @@
 # To run this notebook, make sure that the `/data/test_sets/` directory contains six files. If not, please execute `bin/request_test_sets`.
 
 import sys
+
 sys.path.append("..")
 
 import os
@@ -47,7 +48,9 @@ def read_test_set(file_path):
 
 DIR = "../data/test_sets"
 
-test_set = pd.concat([read_test_set(os.path.join(DIR, test_set)) for test_set in os.listdir(DIR)])
+test_set = pd.concat(
+    [read_test_set(os.path.join(DIR, test_set)) for test_set in os.listdir(DIR)]
+)
 test_set["actions"] = test_set["actions"].astype(str)
 test_set["n_actions"] = test_set["actions"].str.len()
 test_set = test_set.sort_values("n_actions").reset_index(drop=True)
@@ -57,6 +60,7 @@ test_set
 
 # -
 
+
 def create_state(actions, state=None):
     # Creates a state from a sequence of actions.
     game = ConnectXGame()
@@ -65,7 +69,7 @@ def create_state(actions, state=None):
     for action in actions:
         # Indexed at 1, pathetic.
         game.do(state, int(action) - 1, inplace=True)
-    return state    
+    return state
 
 
 test_set["state"] = test_set["actions"].apply(create_state)
@@ -76,14 +80,15 @@ def run_negamax(state):
     game = ConnectXGame()
     start = datetime.now()
     value = negamax(
-        game=game,
-        state=state,
-        depth=10,
-        player=1,
-        order_actions_func=order_actions        
+        game=game, state=state, depth=10, player=1, order_actions_func=order_actions
     )
     end = datetime.now()
-    return pd.Series({"minimax_value": value, "minimax_duration_seconds": (end - start).total_seconds()})
+    return pd.Series(
+        {
+            "minimax_value": value,
+            "minimax_duration_seconds": (end - start).total_seconds(),
+        }
+    )
 
 
 # +
@@ -96,17 +101,23 @@ test_set_filtered
 # +
 # Calculates the benchmark results. For `n_actions>=22`, this took 8:30 minutes for me.
 
-test_set_filtered = test_set_filtered.merge(test_set_filtered["state"].progress_apply(run_negamax), left_index=True, right_index=True)
+test_set_filtered = test_set_filtered.merge(
+    test_set_filtered["state"].progress_apply(run_negamax),
+    left_index=True,
+    right_index=True,
+)
 
 # +
 ax = (
-    test_set_filtered
-    .groupby("n_actions")
-    ["minimax_duration_seconds"]
+    test_set_filtered.groupby("n_actions")["minimax_duration_seconds"]
     .quantile([0.9, 0.95, 0.99, 1])
     .unstack()
     .plot(
-        xticks=range(test_set_filtered["n_actions"].min(), test_set_filtered["n_actions"].max(), 1),        
+        xticks=range(
+            test_set_filtered["n_actions"].min(),
+            test_set_filtered["n_actions"].max(),
+            1,
+        ),
         figsize=(16, 9),
         grid=True,
     )
