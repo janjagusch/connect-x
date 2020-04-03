@@ -1,0 +1,9 @@
+#! /bin/bash
+
+# Downloads the connect 4 openings from the UCI machine learning repository.
+
+wget \
+    --no-check-certificate \
+    --quiet \
+    --output-document "data/openings/openings.zip" \
+    "https://archive.ics.uci.edu/ml/machine-learning-databases/connect-4/connect-4.data.Z"
