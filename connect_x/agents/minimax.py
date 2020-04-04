@@ -8,6 +8,11 @@ import functools
 
 import numpy as np
 
+from connect_x.utils.logger import setup_logger
+
+
+_LOGGER = setup_logger(__name__)
+
 
 class StateValueCache:
     """
@@ -67,13 +72,7 @@ def is_terminated(state, game, player):
 
 
 def negamax(
-    game,
-    state,
-    depth,
-    player,
-    heuristic_func,
-    order_actions_func=None,
-    return_cache=False,
+    game, state, depth, player, heuristic_func, order_actions_func=None,
 ):
     """
     Applies the Negamax algorithm to the game to determine the next best action for
@@ -88,8 +87,6 @@ def negamax(
             the tree can not be resolved up to a terminal leaf.
         order_actions_func (callable, optional): The function that determines in which
             order the actions will be evaluated.
-        return_cache (bool, optional): Whether to return the entire cache, instead of
-            just the value.
 
     Returns:
         float: When `return_cache=False`.
@@ -132,10 +129,16 @@ def negamax(
         return value
 
     _negamax.reset_cache()
-    value = _negamax(
+    _ = _negamax(
         state=state, game=game, depth=depth, alpha=alpha, beta=beta, maximize=1
     )
 
-    if return_cache:
-        return _negamax
-    return value
+    return _best_action(game, state, _negamax.cache, order_actions_func)
+
+
+def _best_action(game, state, cache, order_actions_func):
+    valid_actions = order_actions_func(game.valid_actions(state))
+    valid_states = [game.do(state, action) for action in valid_actions]
+    values = [cache.get(state.state_hash, np.inf) * -1 for state in valid_states]
+    _LOGGER.debug(list(zip(valid_actions, values)))
+    return valid_actions[np.argmax(values)]

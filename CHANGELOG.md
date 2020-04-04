@@ -1,10 +1,11 @@
 # Changelog
 
-## Unreleased Changes
+## 0.7.0
 
 - Added benchmarking environment in `/benchmark`.
 - Fixed logging mistake in `submission.py`.
 - Added processing time benchmarking tool in `/notebooks`.
+- Added iterative deepening.
 
 ## 0.6.0
 

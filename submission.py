@@ -5,12 +5,10 @@ Version: 0.6.0.
 
 from datetime import datetime
 
-import numpy as np
-
 from connect_x.game import ConnectXGame, ConnectXState
 from connect_x.action_catalogue import get_action
-from connect_x.minimax import negamax
-from connect_x.config import heuristic, order_actions, DEPTH
+from connect_x.agents import negamax, IterativeDeepening
+from connect_x.config import heuristic, order_actions, TIMEOUT_BUFFER
 
 from connect_x.utils.logger import setup_logger
 
@@ -23,20 +21,17 @@ def _catalogued_action(state):
 
 
 def _planned_action(game, state):
-    cache = negamax(
+    return IterativeDeepening(
+        negamax,
+        timeout=game.timeout * TIMEOUT_BUFFER,
+        max_depth=game.rows * game.columns - state.counter,
+    )(
         game=game,
         state=state,
-        depth=DEPTH,
         heuristic_func=heuristic,
         order_actions_func=order_actions,
         player=state.mark - 1,
-        return_cache=True,
     )
-    valid_actions = order_actions(game.valid_actions(state))
-    valid_states = [game.do(state, action) for action in valid_actions]
-    values = [cache.cache.get(state.state_hash, np.inf) * -1 for state in valid_states]
-    _LOGGER.debug(list(zip(valid_actions, values)))
-    return valid_actions[np.argmax(values)]
 
 
 def act(observation, configuration):
@@ -55,6 +50,8 @@ def act(observation, configuration):
     state = ConnectXState.from_observation(
         observation, configuration.rows, configuration.columns
     )
+    _LOGGER.info(f"Round #{state.counter}!")
+    _LOGGER.debug(f"State hash: '{state.state_hash}'")
     action = _catalogued_action(state) or _planned_action(game, state)
     end = datetime.now()
     _LOGGER.info(f"Action selected: '{action}'.")

@@ -83,7 +83,7 @@ class ConnectXState(GameState):
         Returns:
             int: The state hash.
         """
-        return 2 * self.bitmaps[0] + self.bitmaps[1]
+        return self.bitmaps[0] + (self.bitmaps[0] | self.bitmaps[1])
 
     def __repr__(self):
         attr_str = ", ".join(f"{key}={value}" for key, value in self.__dict__.items())
@@ -114,7 +114,7 @@ class ConnectXGame(Game):
         self.rows = rows
         self.columns = columns
         self.x = 4
-        self._timeout = timeout
+        self.timeout = timeout
         self._steps = steps
         self._actions = range(columns)
         self._top = int("_".join("1000000" for _ in range(columns)), 2)
@@ -149,7 +149,7 @@ class ConnectXGame(Game):
             rows=self.rows,
             columns=self.columns,
             inarow=self.x,
-            timeout=self._timeout,
+            timeout=self.timeout,
             steps=self._steps,
         )
 
