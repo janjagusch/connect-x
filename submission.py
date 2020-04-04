@@ -14,7 +14,6 @@ from connect_x.utils.logger import setup_logger
 
 
 _LOGGER = setup_logger(__name__)
-_GAME_ROUND = 0
 
 
 def _catalogued_action(state):
