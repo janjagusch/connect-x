@@ -1,5 +1,5 @@
 """
-This module provides an iterative deepening function with a timeout.
+This module provides an iterative deepening class that can be used as a decorator.
 """
 
 import functools
