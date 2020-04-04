@@ -6,7 +6,6 @@ import functools
 import time
 from multiprocessing import Process, Value
 
-from connect_x.utils.timeout import timeout
 from connect_x.utils.logger import setup_logger
 
 
