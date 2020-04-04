@@ -19,7 +19,7 @@ class IterativeDeepening:
     Use it as a decorator.
 
     Args:
-        func (callable): A function with an argument `depth` that returns a result.
+        func (callable): A function that returns a result.
         arg (string, optional): The name of the argument you want to iteratively
             deepen.
         timeout (int): The maximum time (in seconds) for iterative deepening to run.
@@ -43,7 +43,7 @@ class IterativeDeepening:
         func_process = Process(
             target=self.__run_func,
             args=[result, *args],
-            kwargs={"depth": depth, **kwargs},
+            kwargs={self.arg: depth, **kwargs},
         )
         func_process.start()
         while time.perf_counter() - start_time <= self.timeout:
