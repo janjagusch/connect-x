@@ -58,4 +58,6 @@ def order_actions(actions):
     return np.array(actions)[order]
 
 
-TIMEOUT_BUFFER = 0.975
+TIMEOUT_BUFFER = 0.9
+
+INPLACE = True
