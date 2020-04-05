@@ -27,7 +27,7 @@ class IterativeDeepening:
         max_depth (int, optional): The maximum depth for iterative deepening.
     """
 
-    def __init__(self, func, arg="depth", timeout=1, min_depth=0, max_depth=None):
+    def __init__(self, func, arg="depth", timeout=1, min_depth=1, max_depth=None):
         functools.update_wrapper(self, func)
         self.func = func
         self.arg = arg
