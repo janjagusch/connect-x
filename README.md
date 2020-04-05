@@ -48,6 +48,10 @@ My contribution to the [Connect X](https://www.kaggle.com/c/connectx) competitio
 	```
 1. Set the output as `KAGGLE_API_TOKEN`.
 
+## Development
+
+We welcome contributions to this project! Please refer to the [DEVELOPMENT.md](docs/DEVELOPMENT.md) for more details.
+
 ## Help and Support
 
 ### Authors
