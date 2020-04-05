@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased Changes
+
+- Added `docs/DEVELOPMENT.md` to facilitate onboarding of new developers.
+
 ## 0.7.0
 
 - Added benchmarking environment in `/benchmark`.
