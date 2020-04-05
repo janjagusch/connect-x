@@ -79,7 +79,7 @@ Currently divided into three sections:
 
 ## CI/CD
 
-We use [Travis](https://travis-ci.com/github/janjagusch/connect-x). Make sure you have access to it, otherwise request it from [Jan](jan.jagusch@gmail.com). Everytime you push a tag to the repository the `submission_standalone` will be submitted as a solution to Kaggle.
+We use [Travis](https://travis-ci.com/github/janjagusch/connect-x). Make sure you have access to it, otherwise request it from [Jan](jan.jagusch@gmail.com). Everytime you push a tag to the repository the `submission_standalone.py` will be submitted as a solution to Kaggle.
 
 ## Bitmap Representation
 
