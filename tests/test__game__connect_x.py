@@ -23,7 +23,7 @@ class TestConnectXState:
             observation, configuration.rows, configuration.columns
         )
         assert isinstance(state, ConnectXState)
-        assert state.mark == observation.mark
+        assert state._mark == observation.mark
         assert bitmaps_to_board(state.bitmaps) == observation.board
 
     @pytest.fixture(name="state")
