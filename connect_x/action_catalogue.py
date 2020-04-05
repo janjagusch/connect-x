@@ -12,21 +12,21 @@ def _middle_column(matrix):
 
 
 # pylint: disable=unused-argument
-def _action_0(matrix, state):
+def _action_0(matrix, mark):
     return _middle_column(matrix)
 
 
-def _action_1(matrix, state):
+def _action_1(matrix, mark):
     middle_column = _middle_column(matrix)
     if matrix[-1, middle_column] != 0:
         return middle_column + 1
     return middle_column
 
 
-def _action_2(matrix, state):
+def _action_2(matrix, mark):
     middle_column = _middle_column(matrix)
     if (
-        matrix[-1, middle_column] == state.mark
+        matrix[-1, middle_column] == mark
         and matrix[-1, middle_column + 1] == 0
         and matrix[-1, middle_column - 1] == 0
         and matrix[-1, middle_column - 2] == 0
@@ -46,18 +46,20 @@ _ACTION_CATALOGUE = {
 }
 
 
-def get_action(state):
+def get_action(state, player):
     """
     Returns an action from the _ACTION_CATALOGUE, given the state.
 
     Args:
         state (connect_x.game.connect_x.ConnectXState): The state.
+        player (int): The player.
 
     Returns:
         int: The action.
     """
     matrix = bitmaps_to_matrix(state.bitmaps)
+    mark = player + 1
     action_func = _ACTION_CATALOGUE.get(state.counter)
     if action_func:
-        return action_func(matrix, state)
+        return action_func(matrix, mark)
     return None

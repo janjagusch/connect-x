@@ -29,12 +29,12 @@ class ConnectXState(GameState):
 
     """
 
-    def __init__(self, bitmaps, mark, action_log=None, height=None, counter=None):
+    def __init__(self, bitmaps, action_log=None, height=None, counter=None, mark=None):
         self.bitmaps = bitmaps
-        self.mark = mark
         self.action_log = action_log or []
         self.height = height or self._update_height(bitmaps)
         self.counter = counter or self._update_counter(bitmaps)
+        self._mark = mark
 
     @classmethod
     def from_observation(cls, observation, rows, columns):
@@ -63,7 +63,7 @@ class ConnectXState(GameState):
         Returns:
             kaggle_environments.utils.Struct: The observation.
         """
-        return Struct(board=bitmaps_to_board(self.bitmaps), mark=self.mark,)
+        return Struct(board=bitmaps_to_board(self.bitmaps), mark=self._mark,)
 
     @staticmethod
     def _update_height(bitmaps):

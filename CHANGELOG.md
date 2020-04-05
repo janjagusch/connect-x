@@ -3,6 +3,7 @@
 ## Unreleased Changes
 
 - Added `docs/DEVELOPMENT.md` to facilitate onboarding of new developers.
+- Made `.mark` attribute in `connect_x.game.connect_x.ConnectXState` protected.
 
 ## 0.7.0
 
