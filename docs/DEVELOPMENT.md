@@ -12,15 +12,15 @@ This document serves to onboard new developers to this project.
 
 ### Installation
 
-1. Make sure the directory is pointing to a compatible Python version.
-    ```shell
-    pyenv local 3.7.5 3.8.1 # Example
-    ```
-
 1. Clone the repository from GitHub.
 
     ```shell
     git clone git@github.com:janjagusch/connect-x.git
+    ```
+
+1. Make sure the directory is pointing to a compatible Python version.
+    ```shell
+    pyenv local 3.7.5 3.8.1 # Example
     ```
 
 1. Install the dependencies.
