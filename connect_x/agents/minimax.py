@@ -4,8 +4,6 @@ The implementation is taken from here:
 https://github.com/aimacode/aima-python/blob/master/games.py
 """
 
-import functools
-
 import numpy as np
 
 from connect_x.utils.logger import setup_logger
@@ -14,43 +12,7 @@ from connect_x.utils.logger import setup_logger
 _LOGGER = setup_logger(__name__)
 
 
-class StateValueCache:
-    """
-    A cache that stores the value for every state.
-    """
-
-    def __init__(self, func, cache=None):
-        functools.update_wrapper(self, func)
-        self.func = func
-        self.cache = cache or {}
-        self.cache_calls = 0
-
-    def _cached_value(self, key):
-        if key is not None:
-            value = self.cache.get(key)
-            if value is not None:
-                self.cache_calls += 1
-            return value
-        return None
-
-    def _cache_value(self, key, value):
-        if key is not None:
-            self.cache[key] = value
-
-    def reset_cache(self):
-        """
-        Resets the cache.
-        """
-        self.cache = {}
-
-    def __call__(self, *args, **kwargs):
-        key = kwargs.get("state").state_hash
-        value = self._cached_value(key) or self.func(*args, **kwargs)
-        self._cache_value(key, value)
-        return value
-
-
-def is_terminated(state, game, player):
+def is_terminated(game, state, player):
     """
     Returns the value of the game state and whether the game has terminated.
 
@@ -72,73 +34,85 @@ def is_terminated(state, game, player):
 
 
 def negamax(
-    game, state, depth, player, heuristic_func, order_actions_func=None,
+    game,
+    state,
+    player,
+    depth,
+    heuristic_func=None,
+    order_actions_func=None,
+    alpha_beta_pruning=True,
+    inplace=False,
+    maximize=1,
 ):
     """
-    Applies the Negamax algorithm to the game to determine the next best action for
-    the player, given the state.
+    Executes the negamax algorithm.
 
     Args:
-        game (connect_x.game.connect_x.ConnectXGame): The game.
-        state (connect_x.game.connect_x.ConnectXState): The state.
-        depth (int): The maximum depth of the Negamax tree.
-        player (int): The player (1 or 0).
-        heuristic_func (callable, optional): The heuristic function for the state when
-            the tree can not be resolved up to a terminal leaf.
+        game (connect_x.game.Game): The 2-player game.
+        state (connect_x.game.GameState): The game state.
+        player (int): The player.
+        depth (int): The maximum tree depth.
+        heuristic_func (callable, optional): The evaluation function for states at
+            maximum depth that are not terminal leaves.
         order_actions_func (callable, optional): The function that determines in which
-            order the actions will be evaluated.
+            order to evaluate actions.
+        alpha_beta_pruning (bool, optional): Whether to apply alpha-beta pruning.
+        inplace (bool, optional): Whether to transform states inplace.
+            Consumes less memory.
+        maximize (bool, optional): Whether to start with a maximize (1) or a minimize
+            (-1) round.
 
     Returns:
-        float: When `return_cache=False`.
-        dict: When `return_cache=True`.
+        int: The best next action.
     """
-    heuristic_func = heuristic_func or (lambda state, player: 0)
-    order_actions_func = order_actions_func or (lambda actions: actions)
-    alpha = -np.inf
-    beta = np.inf
 
-    @StateValueCache
-    def _negamax(state, game, depth, alpha, beta, maximize):
-        value, terminated = is_terminated(state, game, player)
+    def _negamax(state, depth, alpha, beta, maximize):
+        value, terminated = is_terminated(game, state, player)
         if terminated:
-            return value * maximize
+            return value * maximize, None
         if depth == 0:
-            return heuristic_func(state, player) * maximize
+            return heuristic_func(state, player) * maximize, None
 
         actions = game.valid_actions(state)
         actions = order_actions_func(actions)
 
-        value = -np.inf
+        best_value = None
+        best_action = None
 
         for action in actions:
-            value = max(
-                value,
-                -_negamax(
-                    state=game.do(state, action),
-                    game=game,
-                    depth=depth - 1,
-                    alpha=-beta,
-                    beta=-alpha,
-                    maximize=-maximize,
-                ),
+            new_state = game.do(state, action, inplace=inplace)
+            new_value, _ = _negamax(
+                state=new_state,
+                depth=depth - 1,
+                alpha=-beta,
+                beta=-alpha,
+                maximize=-maximize,
             )
-            alpha = max(alpha, value)
-            if alpha >= beta:
+            new_value *= -1
+
+            if best_value is None or new_value > best_value:
+                best_value = new_value
+                best_action = action
+                alpha = new_value
+
+            if inplace:
+                state = game.undo(new_state, inplace=inplace)
+
+            if alpha_beta_pruning and alpha >= beta:
                 break
 
-        return value
+        return best_value, best_action
 
-    _negamax.reset_cache()
-    _ = _negamax(
-        state=state, game=game, depth=depth, alpha=alpha, beta=beta, maximize=1
+    heuristic_func = heuristic_func or (lambda state, player: 0)
+    order_actions_func = order_actions_func or (lambda actions: actions)
+
+    alpha = -np.inf
+    beta = np.inf
+
+    value, action = _negamax(
+        state=state, depth=depth, alpha=alpha, beta=beta, maximize=maximize
     )
 
-    return _best_action(game, state, _negamax.cache, order_actions_func)
+    _LOGGER.debug(f"Best action '{action}' with value '{value}'.")
 
-
-def _best_action(game, state, cache, order_actions_func):
-    valid_actions = order_actions_func(game.valid_actions(state))
-    valid_states = [game.do(state, action) for action in valid_actions]
-    values = [cache.get(state.state_hash, np.inf) * -1 for state in valid_states]
-    _LOGGER.debug(list(zip(valid_actions, values)))
-    return valid_actions[np.argmax(values)]
+    return action
