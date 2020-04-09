@@ -5,12 +5,12 @@
 #     text_representation:
 #       extension: .py
 #       format_name: light
-#       format_version: '1.4'
-#       jupytext_version: 1.2.4
+#       format_version: '1.5'
+#       jupytext_version: 1.4.2
 #   kernelspec:
-#     display_name: Python (connect-x)
+#     display_name: Python 3
 #     language: python
-#     name: connect-x
+#     name: python3
 # ---
 
 # # Benchmark Environment
@@ -56,3 +56,5 @@ act_2 = lambda observation, configuration: act(
 # Replace `act_1` or `act_2` with "random" or "negamax" to play against default agents.
 env.run([act_2, act_1])
 env.render(mode="ipython", width=500, height=450)
+
+

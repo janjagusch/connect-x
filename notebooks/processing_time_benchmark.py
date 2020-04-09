@@ -5,12 +5,12 @@
 #     text_representation:
 #       extension: .py
 #       format_name: light
-#       format_version: '1.4'
-#       jupytext_version: 1.2.4
+#       format_version: '1.5'
+#       jupytext_version: 1.4.2
 #   kernelspec:
-#     display_name: Python (connect-x)
+#     display_name: Python 3
 #     language: python
-#     name: connect-x
+#     name: python3
 # ---
 
 # # Processing Time Benchmark
@@ -29,8 +29,9 @@ from datetime import datetime
 import pandas as pd
 from tqdm import tqdm
 
+
 from connect_x.game.connect_x import ConnectXGame
-from connect_x.minimax import negamax
+from connect_x.agents import negamax
 from connect_x.config import order_actions, heuristic
 
 tqdm.pandas()
@@ -75,20 +76,22 @@ def create_state(actions, state=None):
 test_set["state"] = test_set["actions"].apply(create_state)
 
 
-def run_negamax(state):
-    # Runs the negamax returns the  value and how long it took to process.
-    game = ConnectXGame()
-    start = datetime.now()
-    value = negamax(
-        game=game, state=state, depth=10, player=1, order_actions_func=order_actions
-    )
-    end = datetime.now()
-    return pd.Series(
-        {
-            "minimax_value": value,
-            "minimax_duration_seconds": (end - start).total_seconds(),
-        }
-    )
+def negamax_func(depth=10):
+    def _negamax(state):
+        # Runs the negamax returns the  value and how long it took to process.
+        game = ConnectXGame()
+        start = datetime.now()
+        value = negamax(
+            game=game, state=state, depth=depth, player=1, order_actions_func=order_actions, heuristic_func=heuristic
+        )
+        end = datetime.now()
+        return pd.Series(
+            {
+                "minimax_value": value,
+                "minimax_duration_seconds": (end - start).total_seconds(),
+            }
+        )
+    return _negamax
 
 
 # +
@@ -102,7 +105,7 @@ test_set_filtered
 # Calculates the benchmark results. For `n_actions>=22`, this took 8:30 minutes for me.
 
 test_set_filtered = test_set_filtered.merge(
-    test_set_filtered["state"].progress_apply(run_negamax),
+    test_set_filtered["state"].progress_apply(negamax_func(depth=5)),
     left_index=True,
     right_index=True,
 )
@@ -125,3 +128,10 @@ ax = (
 
 _ = ax.set_xlabel("Number of actions")
 _ = ax.set_ylabel("Processing time in seconds")
+# -
+
+
+
+
+
+
