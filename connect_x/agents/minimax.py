@@ -9,6 +9,8 @@ import functools
 
 import numpy as np
 
+import asyncio
+
 from connect_x.utils.logger import setup_logger
 
 
@@ -112,6 +114,7 @@ async def negamax(
         value = -np.inf
 
         for action in actions:
+            await asyncio.sleep(0)
             v = await _negamax(
                 state=game.do(state, action),
                 game=game,
