@@ -43,9 +43,9 @@ class StateValueCache:
         """
         self.cache = {}
 
-    def __call__(self, *args, **kwargs):
+    async def __call__(self, *args, **kwargs):
         key = kwargs.get("state").state_hash
-        value = self._cached_value(key) or self.func(*args, **kwargs)
+        value = self._cached_value(key) or await self.func(*args, **kwargs)
         self._cache_value(key, value)
         return value
 
@@ -71,7 +71,7 @@ def is_terminated(state, game, player):
     return None, False
 
 
-def negamax(
+async def negamax(
     game, state, depth, player, heuristic_func, order_actions_func=None,
 ):
     """
@@ -98,7 +98,7 @@ def negamax(
     beta = np.inf
 
     @StateValueCache
-    def _negamax(state, game, depth, alpha, beta, maximize):
+    async def _negamax(state, game, depth, alpha, beta, maximize):
         value, terminated = is_terminated(state, game, player)
         if terminated:
             return value * maximize
@@ -111,17 +111,15 @@ def negamax(
         value = -np.inf
 
         for action in actions:
-            value = max(
-                value,
-                -_negamax(
-                    state=game.do(state, action),
-                    game=game,
-                    depth=depth - 1,
-                    alpha=-beta,
-                    beta=-alpha,
-                    maximize=-maximize,
-                ),
+            v = await _negamax(
+                state=game.do(state, action),
+                game=game,
+                depth=depth - 1,
+                alpha=-beta,
+                beta=-alpha,
+                maximize=-maximize,
             )
+            value = max(value, -v)
             alpha = max(alpha, value)
             if alpha >= beta:
                 break
@@ -129,7 +127,7 @@ def negamax(
         return value
 
     _negamax.reset_cache()
-    _ = _negamax(
+    _ = await _negamax(
         state=state, game=game, depth=depth, alpha=alpha, beta=beta, maximize=1
     )
 
