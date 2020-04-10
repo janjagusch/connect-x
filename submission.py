@@ -20,6 +20,30 @@ def _catalogued_action(state, player):
     return get_action(state, player)
 
 
+# async def iterative_deepening():
+#     results = None
+#     depth = self.min_depth
+#     timeout = game.timeout * TIMEOUT_BUFFER
+#     max_depth = game.rows * game.columns - state.counter
+
+#     _LOGGER.debug(f"Starting iterative deepening with depth={min_depth}.")
+#     for depth in range(min_depth, max_depth+1):
+#         try:
+#             result = self._run_func(start_time, depth, *args, **kwargs)
+#         except TimeoutError:
+#             break
+#         _LOGGER.debug(
+#             f"Iterative deepening with depth={depth} completed. "
+#             f"Result: {result}"
+#         )
+#         depth += 1
+
+#     _LOGGER.debug(f"Maximum depth={max_depth} reached. ")
+#     return result
+
+import asyncio
+
+
 def _planned_action(game, state, player):
     action = IterativeDeepening(
         negamax,
@@ -59,6 +83,8 @@ def act(observation, configuration):
     _LOGGER.debug(f"State hash: '{state.state_hash}'")
     _LOGGER.debug(f"Player: '{player}'.")
     action = _catalogued_action(state, player) or _planned_action(game, state, player)
+    if _catalogued_action(state, player):
+        _LOGGER.debug(f"Cache hit")
     end = datetime.now()
     _LOGGER.info(f"Action selected: '{action}'.")
     _LOGGER.debug(f"Time taken: {end - start}.")
