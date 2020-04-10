@@ -1,10 +1,11 @@
 """
 This module defines the Connect-X game.
 """
-
+from distutils.version import StrictVersion as Version
 from copy import deepcopy
 
 import numpy as np
+from kaggle_environments import version as kaggle_env_version
 from kaggle_environments.utils import Struct
 
 from connect_x.game.game import Game, GameState
@@ -130,6 +131,15 @@ class ConnectXGame(Game):
         Returns:
             ConnectXGame: The game.
         """
+
+        if Version(kaggle_env_version) > Version("0.2.0"):
+            return cls(
+                rows=configuration.rows,
+                columns=configuration.columns,
+                x=configuration.inarow,
+                timeout=configuration.actTimeout,
+                steps=configuration.episodeSteps,
+            )
         return cls(
             rows=configuration.rows,
             columns=configuration.columns,

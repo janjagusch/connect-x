@@ -33,7 +33,12 @@
 from kaggle_environments import make
 import requests
 
-env = make("connectx")
+import sys
+
+sys.path.append("..")
+from submission import act as current_act
+
+env = make("connectx", debug=True)
 _ = env.reset()
 
 
@@ -54,7 +59,5 @@ act_2 = lambda observation, configuration: act(
 )
 
 # Replace `act_1` or `act_2` with "random" or "negamax" to play against default agents.
-env.run([act_2, act_1])
+env.run(["negamax", act_1])
 env.render(mode="ipython", width=500, height=450)
-
-
