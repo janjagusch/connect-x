@@ -9,6 +9,8 @@ import functools
 
 import numpy as np
 
+import asyncio
+
 from connect_x.utils.logger import setup_logger
 
 
@@ -113,18 +115,13 @@ async def negamax(
 
         for action in actions:
             await asyncio.sleep(0)
-            value = max(
-                value,
-                -(
-                    await _negamax(
-                        state=game.do(state, action),
-                        game=game,
-                        depth=depth - 1,
-                        alpha=-beta,
-                        beta=-alpha,
-                        maximize=-maximize,
-                    )
-                ),
+            v = await _negamax(
+                state=game.do(state, action),
+                game=game,
+                depth=depth - 1,
+                alpha=-beta,
+                beta=-alpha,
+                maximize=-maximize,
             )
             value = max(value, -v)
             alpha = max(alpha, value)
