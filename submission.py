@@ -20,19 +20,68 @@ def _catalogued_action(state, player):
     return get_action(state, player)
 
 
+# async def iterative_deepening():
+#     results = None
+#     depth = self.min_depth
+#     timeout = game.timeout * TIMEOUT_BUFFER
+#     max_depth = game.rows * game.columns - state.counter
+
+#     _LOGGER.debug(f"Starting iterative deepening with depth={min_depth}.")
+#     for depth in range(min_depth, max_depth+1):
+#         try:
+#             result = self._run_func(start_time, depth, *args, **kwargs)
+#         except TimeoutError:
+#             break
+#         _LOGGER.debug(
+#             f"Iterative deepening with depth={depth} completed. "
+#             f"Result: {result}"
+#         )
+#         depth += 1
+
+#     _LOGGER.debug(f"Maximum depth={max_depth} reached. ")
+#     return result
+
+import asyncio
+
+
 def _planned_action(game, state, player):
-    action = IterativeDeepening(
-        negamax,
-        timeout=game.timeout * TIMEOUT_BUFFER,
-        max_depth=game.rows * game.columns - state.counter,
-    )(
-        game=game,
-        state=state,
-        player=player,
-        heuristic_func=heuristic,
-        order_actions_func=order_actions,
-    )
-    return action
+    result = None
+    timeout = game.timeout * TIMEOUT_BUFFER
+    min_depth = 0
+    max_depth = game.rows * game.columns - state.counter
+    _LOGGER.debug(f"Internal timeout: {timeout}.")
+
+    async def iterative_deepening():
+        """
+        Repeats the minimax algorithm with an increasingle larger depth, and 
+        saves the latest result to a nonlocal variable in the closure.
+        """
+        nonlocal result
+        for depth in range(min_depth, max_depth + 1):
+            _LOGGER.debug(f"Minimax depth: {depth}.")
+            result = await negamax(
+                game=game,
+                state=state,
+                player=player,
+                depth=depth,
+                heuristic_func=heuristic,
+                order_actions_func=order_actions,
+            )
+
+    async def call_with_timeout(afun, t=timeout):
+        """
+        Calls an async function with a timeout. Note that this requires that
+        the function itself is async and runs on the event loop, such that it 
+        can be interrupted.
+        """
+        try:
+            await asyncio.wait_for(afun(), timeout=t)
+        except asyncio.TimeoutError:
+            _LOGGER.debug(f"Timed out internally")
+            return
+
+    asyncio.run(call_with_timeout(iterative_deepening))
+    return result
 
 
 def act(observation, configuration):
@@ -59,6 +108,8 @@ def act(observation, configuration):
     _LOGGER.debug(f"State hash: '{state.state_hash}'")
     _LOGGER.debug(f"Player: '{player}'.")
     action = _catalogued_action(state, player) or _planned_action(game, state, player)
+    if _catalogued_action(state, player):
+        _LOGGER.debug(f"Cache hit")
     end = datetime.now()
     _LOGGER.info(f"Action selected: '{action}'.")
     _LOGGER.debug(f"Time taken: {end - start}.")
