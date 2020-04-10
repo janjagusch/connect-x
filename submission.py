@@ -3,6 +3,8 @@ This module contains the submission for the Kaggle competition.
 Version: 0.6.0.
 """
 
+import asyncio
+
 from datetime import datetime
 
 from connect_x.game import ConnectXGame, ConnectXState
@@ -20,36 +22,12 @@ def _catalogued_action(state, player):
     return get_action(state, player)
 
 
-# async def iterative_deepening():
-#     results = None
-#     depth = self.min_depth
-#     timeout = game.timeout * TIMEOUT_BUFFER
-#     max_depth = game.rows * game.columns - state.counter
-
-#     _LOGGER.debug(f"Starting iterative deepening with depth={min_depth}.")
-#     for depth in range(min_depth, max_depth+1):
-#         try:
-#             result = self._run_func(start_time, depth, *args, **kwargs)
-#         except TimeoutError:
-#             break
-#         _LOGGER.debug(
-#             f"Iterative deepening with depth={depth} completed. "
-#             f"Result: {result}"
-#         )
-#         depth += 1
-
-#     _LOGGER.debug(f"Maximum depth={max_depth} reached. ")
-#     return result
-
-import asyncio
-
-
 def _planned_action(game, state, player):
     result = None
     timeout = game.timeout * TIMEOUT_BUFFER
     min_depth = 0
     max_depth = game.rows * game.columns - state.counter
-    _LOGGER.debug(f"Internal timeout: {timeout}.")
+    _LOGGER.debug(f"Setting internal timeout: {timeout}.")
 
     async def iterative_deepening():
         """
