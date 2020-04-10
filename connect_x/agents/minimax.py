@@ -126,6 +126,7 @@ async def negamax(
                     )
                 ),
             )
+            value = max(value, -v)
             alpha = max(alpha, value)
             if alpha >= beta:
                 break
