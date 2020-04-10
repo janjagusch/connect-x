@@ -140,14 +140,13 @@ class ConnectXGame(Game):
                 timeout=configuration.actTimeout,
                 steps=configuration.episodeSteps,
             )
-        else:
-            return cls(
-                rows=configuration.rows,
-                columns=configuration.columns,
-                x=configuration.inarow,
-                timeout=configuration.timeout,
-                steps=configuration.steps,
-            )
+        return cls(
+            rows=configuration.rows,
+            columns=configuration.columns,
+            x=configuration.inarow,
+            timeout=configuration.timeout,
+            steps=configuration.steps,
+        )
 
     def to_configuration(self):
         """
