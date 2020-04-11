@@ -9,7 +9,7 @@ from datetime import datetime
 
 from connect_x.game import ConnectXGame, ConnectXState
 from connect_x.action_catalogue import get_action
-from connect_x.agents import negamax, IterativeDeepening
+from connect_x.agents import negamax
 from connect_x.config import heuristic, order_actions, TIMEOUT_BUFFER
 
 from connect_x.utils.logger import setup_logger
@@ -31,7 +31,7 @@ def _planned_action(game, state, player):
 
     async def iterative_deepening():
         """
-        Repeats the minimax algorithm with an increasingle larger depth, and 
+        Repeats the minimax algorithm with an increasingle larger depth, and
         saves the latest result to a nonlocal variable in the closure.
         """
         nonlocal result
@@ -46,14 +46,14 @@ def _planned_action(game, state, player):
                 order_actions_func=order_actions,
             )
 
-    async def call_with_timeout(afun, t=timeout):
+    async def call_with_timeout(afun, timeout=timeout):
         """
         Calls an async function with a timeout. Note that this requires that
-        the function itself is async and runs on the event loop, such that it 
+        the function itself is async and runs on the event loop, such that it
         can be interrupted.
         """
         try:
-            await asyncio.wait_for(afun(), timeout=t)
+            await asyncio.wait_for(afun(), timeout=timeout)
         except asyncio.TimeoutError:
             _LOGGER.debug(f"Timed out internally")
             return
