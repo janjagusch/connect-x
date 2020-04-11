@@ -4,6 +4,8 @@ This package is 100% port of Python built-in function functools.lru_cache for as
 Thanks to: https://github.com/aio-libs/async_lru
 """
 
+# pylint: skip-file
+
 import asyncio
 from collections import OrderedDict
 from functools import _CacheInfo, _make_key, partial, wraps
