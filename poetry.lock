@@ -398,7 +398,7 @@ description = "Kaggle Environments"
 name = "kaggle-environments"
 optional = false
 python-versions = ">=3.6"
-version = "0.2.1"
+version = "0.1.6"
 
 [package.dependencies]
 jsonschema = ">=3.0.1"
@@ -914,7 +914,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "334732763cb7f110d25b3541c7f5409ecab620ef48cd67d85322b2afbbd98699"
+content-hash = "75b6325f45e37c2c5fdab09435cbaca8d91bc45ba7ec13f5f7f04358f79560c5"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -1068,8 +1068,8 @@ kaggle = [
     {file = "kaggle-1.5.6.tar.gz", hash = "sha256:3c2c097dca964b9a891bf3407a3164be19e40857c7c5cc2c5fef323adfccb838"},
 ]
 kaggle-environments = [
-    {file = "kaggle-environments-0.2.1.tar.gz", hash = "sha256:d804d55a77a21de9fffc4a07524caf6d9369d5cb90644f0f990f3531caac2bcd"},
-    {file = "kaggle_environments-0.2.1-py3-none-any.whl", hash = "sha256:dac2a3a8ad4d0ce1228b2b1ce0bd6e4d03ca0ad35767da4ac29cccec960fefcf"},
+    {file = "kaggle-environments-0.1.6.tar.gz", hash = "sha256:8eb040b0f064be0184f6e9dfa3979cd692a7443cc4d56bb62417afdedd861f83"},
+    {file = "kaggle_environments-0.1.6-py3-none-any.whl", hash = "sha256:6a35b760d8d83da488dbd614abcb7fe5f9f8157fbdab46edebd99c0495af036f"},
 ]
 kiwisolver = [
     {file = "kiwisolver-1.2.0-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:443c2320520eda0a5b930b2725b26f6175ca4453c61f739fef7a5847bd262f74"},
