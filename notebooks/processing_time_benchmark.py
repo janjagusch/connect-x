@@ -82,7 +82,12 @@ def negamax_func(depth=10):
         game = ConnectXGame()
         start = datetime.now()
         value = negamax(
-            game=game, state=state, depth=depth, player=1, order_actions_func=order_actions, heuristic_func=heuristic
+            game=game,
+            state=state,
+            depth=depth,
+            player=1,
+            order_actions_func=order_actions,
+            heuristic_func=heuristic,
         )
         end = datetime.now()
         return pd.Series(
@@ -91,6 +96,7 @@ def negamax_func(depth=10):
                 "minimax_duration_seconds": (end - start).total_seconds(),
             }
         )
+
     return _negamax
 
 
@@ -129,9 +135,3 @@ ax = (
 _ = ax.set_xlabel("Number of actions")
 _ = ax.set_ylabel("Processing time in seconds")
 # -
-
-
-
-
-
-
