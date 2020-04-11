@@ -27,11 +27,9 @@ def connected(state, player, x):
 def heuristic(state, player):
     """
     The heuristic function.
-
     Args:
         state (connect_x.game.connect_x.ConnectXState): The state.
         player (int): The player (0 or 1).
-
     Returns:
         float: The heuristic value.
     """
@@ -58,6 +56,6 @@ def order_actions(actions):
     return np.array(actions)[order]
 
 
-TIMEOUT_BUFFER = 0.825
+TIMEOUT_BUFFER = 0.975
 
 INPLACE = True
