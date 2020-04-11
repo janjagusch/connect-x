@@ -3,8 +3,6 @@ This module contains the submission for the Kaggle competition.
 Version: 0.6.0.
 """
 
-import asyncio
-
 from datetime import datetime
 
 from connect_x.game import ConnectXGame, ConnectXState
@@ -34,7 +32,6 @@ def _planned_action(game, state, player):
         heuristic_func=heuristic,
         order_actions_func=order_actions,
     )
-    _LOGGER.debug(f"Selected action: {action}.")
     return action
 
 
