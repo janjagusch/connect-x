@@ -5,11 +5,14 @@ This module provides an iterative deepening class that can be used as a decorato
 import asyncio
 import functools
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import time
 import asyncio
 from multiprocessing import Process, Value
 >>>>>>> Changed submission.py back to its original form, moved iterative
+=======
+>>>>>>> e584ed4653d4bb65a61496f6d2df84336b41c4c9
 
 from connect_x.utils.logger import setup_logger
 
@@ -63,5 +66,5 @@ class IterativeDeepening:
         """
         for depth in range(self.min_depth, self.max_depth + 1):
             _LOGGER.debug(f"Starting minimax with depth {depth}")
-            _LOGGER.debug(f"Minimax depth: {depth}.")
             self.result = await self.func(*args, **{**kwargs, self.arg: depth})
+            _LOGGER.debug(f"Minimax with depth {depth} yielded action: {self.result}")
