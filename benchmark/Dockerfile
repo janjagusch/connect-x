@@ -1,6 +1,6 @@
 FROM tiangolo/uwsgi-nginx-flask:python3.7
 
-RUN pip install requests kaggle-environments numpy scipy gym
+RUN pip install requests kaggle-environments==0.1.6 numpy scipy gym
 
 ARG AGENT_FILE
 ENV AGENT_FILE=${AGENT_FILE}
