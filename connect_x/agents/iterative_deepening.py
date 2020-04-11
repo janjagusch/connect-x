@@ -55,7 +55,6 @@ class IterativeDeepening:
         Repeats the minimax algorithm with an increasingle larger depth, and
         saves the latest result to a nonlocal variable in the closure.
         """
-        for depth in range(self.min_depth, self.max_depth + 1):
             _LOGGER.debug(f"Starting minimax with depth {depth}")
             self.result = await self.func(depth=depth, *args, **kwargs)
             _LOGGER.debug(f"Minimax with depth {depth} yielded action: {self.result}")
