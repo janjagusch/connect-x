@@ -2,10 +2,8 @@
 This module provides an iterative deepening class that can be used as a decorator.
 """
 
-import functools
-import time
 import asyncio
-from multiprocessing import Process, Value
+import functools
 
 from connect_x.utils.logger import setup_logger
 
@@ -35,6 +33,7 @@ class IterativeDeepening:
         self.timeout = timeout
         self.min_depth = min_depth
         self.max_depth = max_depth
+        self.result = None
 
     def __call__(self, *args, **kwargs):
         self.result = None
@@ -57,5 +56,6 @@ class IterativeDeepening:
         saves the latest result to a nonlocal variable in the closure.
         """
         for depth in range(self.min_depth, self.max_depth + 1):
-            _LOGGER.debug(f"Minimax depth: {depth}.")
+            _LOGGER.debug(f"Starting minimax with depth {depth}")
             self.result = await self.func(depth=depth, *args, **kwargs)
+            _LOGGER.debug(f"Minimax with depth {depth} yielded action: {self.result}")
