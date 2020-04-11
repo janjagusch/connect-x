@@ -9,7 +9,7 @@ from datetime import datetime
 
 from connect_x.game import ConnectXGame, ConnectXState
 from connect_x.action_catalogue import get_action
-from connect_x.agents import negamax
+from connect_x.agents import negamax, IterativeDeepening
 from connect_x.config import heuristic, order_actions, TIMEOUT_BUFFER
 
 from connect_x.utils.logger import setup_logger
@@ -23,43 +23,19 @@ def _catalogued_action(state, player):
 
 
 def _planned_action(game, state, player):
-    result = None
-    timeout = game.timeout * TIMEOUT_BUFFER
-    min_depth = 0
-    max_depth = game.rows * game.columns - state.counter
-    _LOGGER.debug(f"Setting internal timeout: {timeout}.")
-
-    async def iterative_deepening():
-        """
-        Repeats the minimax algorithm with an increasingle larger depth, and
-        saves the latest result to a nonlocal variable in the closure.
-        """
-        nonlocal result
-        for depth in range(min_depth, max_depth + 1):
-            _LOGGER.debug(f"Minimax depth: {depth}.")
-            result = await negamax(
-                game=game,
-                state=state,
-                player=player,
-                depth=depth,
-                heuristic_func=heuristic,
-                order_actions_func=order_actions,
-            )
-
-    async def call_with_timeout(afun, timeout=timeout):
-        """
-        Calls an async function with a timeout. Note that this requires that
-        the function itself is async and runs on the event loop, such that it
-        can be interrupted.
-        """
-        try:
-            await asyncio.wait_for(afun(), timeout=timeout)
-        except asyncio.TimeoutError:
-            _LOGGER.debug(f"Timed out internally")
-            return
-
-    asyncio.run(call_with_timeout(iterative_deepening))
-    return result
+    action = IterativeDeepening(
+        negamax,
+        timeout=game.timeout * TIMEOUT_BUFFER,
+        max_depth=game.rows * game.columns - state.counter,
+    )(
+        game=game,
+        state=state,
+        player=player,
+        heuristic_func=heuristic,
+        order_actions_func=order_actions,
+    )
+    _LOGGER.debug(f"Selected action: {action}.")
+    return action
 
 
 def act(observation, configuration):
@@ -78,7 +54,7 @@ def act(observation, configuration):
 
     game = ConnectXGame.from_configuration(configuration)
     state = ConnectXState.from_observation(
-        observation, configuration.rows, configuration.columns
+        observation, configuration.rows, configuration.columns   
     )
     player = observation.mark - 1
 
@@ -86,8 +62,6 @@ def act(observation, configuration):
     _LOGGER.debug(f"State hash: '{state.state_hash}'")
     _LOGGER.debug(f"Player: '{player}'.")
     action = _catalogued_action(state, player) or _planned_action(game, state, player)
-    if _catalogued_action(state, player):
-        _LOGGER.debug(f"Cache hit")
     end = datetime.now()
     _LOGGER.info(f"Action selected: '{action}'.")
     _LOGGER.debug(f"Time taken: {end - start}.")
