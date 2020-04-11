@@ -2,12 +2,12 @@
 This module implements the Minimax algorithm.
 """
 
-from functools import lru_cache
 import asyncio
 
 import numpy as np
 
 from connect_x.utils.logger import setup_logger
+from connect_x.utils.async_lru import alru_cache
 
 
 _LOGGER = setup_logger(__name__)
@@ -74,7 +74,7 @@ class Minimax:
                 if self.inplace:
                     self.game.undo(state, inplace=self.inplace)
 
-    # @lru_cache(maxsize=100000)
+    @alru_cache(maxsize=100000)
     async def _minimax(self, state, depth, alpha, beta, maximize):
         await asyncio.sleep(0)
         value = self._static_evaluation(state=state, depth=depth)
@@ -115,14 +115,14 @@ class Minimax:
 
     async def __call__(self, state):
 
-        # self._minimax.cache_clear()
+        self._minimax.cache_clear()
 
         meta_state = await self._minimax(
             state=state, depth=self.depth, alpha=-np.inf, beta=np.inf, maximize=True,
         )
 
         # pylint: disable=no-value-for-parameter
-        # _LOGGER.debug(self._minimax.cache_info())
+        _LOGGER.debug(self._minimax.cache_info())
         # pylint: enable=no-value-for-parameter
         _LOGGER.debug(meta_state)
 
