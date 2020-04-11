@@ -12,39 +12,6 @@ from connect_x.utils.logger import setup_logger
 _LOGGER = setup_logger(__name__)
 
 
-class _MetaState:
-
-    LOWERBOUND = -1
-    EXACT = 0
-    UPPERBOUND = 1
-
-    def __init__(self, value, depth, bound):
-        self.value = value
-        self.depth = depth
-        self.bound = bound
-
-    def __lt__(self, other):
-        return self.value < other.value
-
-    def __le__(self, other):
-        return self.value <= other.value
-
-    def __eq__(self, other):
-        return self.value == other.value
-
-    def __ge__(self, other):
-        return self.value >= other.value
-
-    def __gt__(self, other):
-        return self.value > other.value
-
-    def __repr__(self):
-        return (
-            f"{self.__class__.__name__}"
-            f"({', '.join(f'{k}={v}' for k, v in vars(self).items())})"
-        )
-
-
 class Minimax:
     """
     This class defines the Minimax algorithm.
