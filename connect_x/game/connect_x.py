@@ -75,15 +75,8 @@ class ConnectXState(GameState):
     def _update_counter(bitmaps):
         return bin(bitmaps[0])[2:].count("1") + bin(bitmaps[1])[2:].count("1")
 
-    @property
-    def state_hash(self):
-        """
-        Creates a unique hash for the state.
-
-        Returns:
-            int: The state hash.
-        """
-        return self.bitmaps[0] + (self.bitmaps[0] | self.bitmaps[1])
+    def __hash__(self):
+        return int(self.bitmaps[0] + (self.bitmaps[0] | self.bitmaps[1]))
 
     def __repr__(self):
         attr_str = ", ".join(f"{key}={value}" for key, value in self.__dict__.items())

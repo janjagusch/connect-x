@@ -8,13 +8,6 @@ class GameState:
     This class represent a abitrary state for a game.
     """
 
-    @property
-    def state_hash(self):
-        """
-        Creates a unique hash for the state.
-        """
-        return None
-
 
 class Game:
     """
