@@ -115,15 +115,17 @@ class Minimax:
 
     async def __call__(self, state):
 
+        # pylint: disable=no-member
         self._minimax.cache_clear()
+        # pylint: enable=no-member
 
         meta_state = await self._minimax(
             state=state, depth=self.depth, alpha=-np.inf, beta=np.inf, maximize=True,
         )
 
-        # pylint: disable=no-value-for-parameter
+        # pylint: disable=no-value-for-parameter, no-member
         _LOGGER.debug(self._minimax.cache_info())
-        # pylint: enable=no-value-for-parameter
+        # pylint: enable=no-value-for-parameter, no-member
         _LOGGER.debug(meta_state)
 
         return meta_state
