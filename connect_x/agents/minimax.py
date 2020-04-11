@@ -1,8 +1,8 @@
 """
-This module implements the Minimax search algorithm with Alpha-Beta pruning.
-The implementation is taken from here:
-https://github.com/aimacode/aima-python/blob/master/games.py
+This module implements the Minimax algorithm.
 """
+
+from functools import lru_cache
 
 import numpy as np
 
@@ -12,107 +12,145 @@ from connect_x.utils.logger import setup_logger
 _LOGGER = setup_logger(__name__)
 
 
-def is_terminated(game, state, player):
+class _MetaState:
+
+    LOWERBOUND = -1
+    EXACT = 0
+    UPPERBOUND = 1
+
+    def __init__(self, value, depth, bound):
+        self.value = value
+        self.depth = depth
+        self.bound = bound
+
+    def __lt__(self, other):
+        return self.value < other.value
+
+    def __le__(self, other):
+        return self.value <= other.value
+
+    def __eq__(self, other):
+        return self.value == other.value
+
+    def __ge__(self, other):
+        return self.value >= other.value
+
+    def __gt__(self, other):
+        return self.value > other.value
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}"
+            f"({', '.join(f'{k}={v}' for k, v in vars(self).items())})"
+        )
+
+
+class Minimax:
     """
-    Returns the value of the game state and whether the game has terminated.
+    This class defines the Minimax algorithm.
 
     Args:
-        state (connect_x.game.connect_x.ConnectXState): The state.
-        game (connect_x.game.connect_x.ConnectXGame): The game.
-        player (int): The player (1 or 0).
-
-    Returns:
-        tuple: The value of the state for the player and whether the game has ended.
-    """
-    if game.is_win(state, player):
-        return np.inf, True
-    if game.is_win(state, 1 - player):
-        return -np.inf, True
-    if game.is_draw(state):
-        return 0, True
-    return None, False
-
-
-def negamax(
-    game,
-    state,
-    player,
-    depth,
-    heuristic_func=None,
-    order_actions_func=None,
-    alpha_beta_pruning=True,
-    inplace=False,
-    maximize=1,
-):
-    """
-    Executes the negamax algorithm.
-
-    Args:
-        game (connect_x.game.Game): The 2-player game.
-        state (connect_x.game.GameState): The game state.
+        game (connect_x.game.game.Game): The game.
         player (int): The player.
-        depth (int): The maximum tree depth.
-        heuristic_func (callable, optional): The evaluation function for states at
-            maximum depth that are not terminal leaves.
-        order_actions_func (callable, optional): The function that determines in which
-            order to evaluate actions.
-        alpha_beta_pruning (bool, optional): Whether to apply alpha-beta pruning.
-        inplace (bool, optional): Whether to transform states inplace.
-            Consumes less memory.
-        maximize (bool, optional): Whether to start with a maximize (1) or a minimize
-            (-1) round.
-
-    Returns:
-        int: The best next action.
+        depth (int): The maximum depth for the search tree.
+        heuristic_func (callable, optional): The function that evaluates non-terminal
+            nodes at maximum depth. Takes two arguments: `state` and `player`.
+        order_actions_func (callable, optional): The function that defines in which
+            order the valid actions should be evaluated. Takes one argument: `actions`.
+        alpha_beta_pruning (bool, optional): Whether alpha-beta pruning should be
+            applied to the search tree.
+        inplace (bool, optional): Whether the initial game state should be evaluated
+            inplace.
     """
 
-    def _negamax(state, depth, alpha, beta, maximize):
-        value, terminated = is_terminated(game, state, player)
-        if terminated:
-            return value * maximize, None
-        if depth == 0:
-            return heuristic_func(state, player) * maximize, None
+    def __init__(
+        self,
+        game,
+        player,
+        depth,
+        heuristic_func=None,
+        order_actions_func=None,
+        alpha_beta_pruning=True,
+        inplace=False,
+    ):
+        self.game = game
+        self.player = player
+        self.depth = depth
+        self.heuristic_func = heuristic_func or (lambda state, player: 0)
+        self.order_actions_func = order_actions_func or (lambda actions: actions)
+        self.alpha_beta_pruning = alpha_beta_pruning
+        self.inplace = inplace
 
-        actions = game.valid_actions(state)
-        actions = order_actions_func(actions)
+    def _is_terminated(self, state):
+        if self.game.is_win(state, self.player):
+            return np.inf, True
+        if self.game.is_win(state, 1 - self.player):
+            return -np.inf, True
+        if self.game.is_draw(state):
+            return 0, True
+        return None, False
+
+    def _static_evaluation(self, *, state, depth):
+        value, terminated = self._is_terminated(state)
+        if terminated:
+            return value
+        if not depth:
+            return self.heuristic_func(state, self.player)
+        return None
+
+    def _child_states(self, state, actions):
+        for action in actions:
+            try:
+                yield action, self.game.do(state, action, inplace=self.inplace)
+            finally:
+                if self.inplace:
+                    self.game.undo(state, inplace=self.inplace)
+
+    @lru_cache(maxsize=100000)
+    def _minimax(self, state, depth, alpha, beta, maximize):
+        value = self._static_evaluation(state=state, depth=depth)
+        if value is not None:
+            return value, None
+
+        actions = self.game.valid_actions(state)
+        actions = self.order_actions_func(actions)
 
         best_value = None
         best_action = None
 
-        for action in actions:
-            new_state = game.do(state, action, inplace=inplace)
-            new_value, _ = _negamax(
-                state=new_state,
-                depth=depth - 1,
-                alpha=-beta,
-                beta=-alpha,
-                maximize=-maximize,
-            )
-            new_value *= -1
+        if maximize:
+            for action, child in self._child_states(state, actions):
+                value, _ = self._minimax(child, depth - 1, alpha, beta, maximize=False)
+                if best_value is None or best_value < value:
+                    best_value = value
+                    best_action = action
+                alpha = max(alpha, value)
+                if self.alpha_beta_pruning and beta <= alpha:
+                    break
 
-            if best_value is None or new_value > best_value:
-                best_value = new_value
-                best_action = action
-                alpha = new_value
-
-            if inplace:
-                state = game.undo(new_state, inplace=inplace)
-
-            if alpha_beta_pruning and alpha >= beta:
-                break
+        else:
+            for action, child in self._child_states(state, actions):
+                value, _ = self._minimax(child, depth - 1, alpha, beta, maximize=True)
+                if best_value is None or best_value > value:
+                    best_value = value
+                    best_action = action
+                beta = min(beta, value)
+                if self.alpha_beta_pruning and beta <= alpha:
+                    break
 
         return best_value, best_action
 
-    heuristic_func = heuristic_func or (lambda state, player: 0)
-    order_actions_func = order_actions_func or (lambda actions: actions)
+    def __call__(self, state):
 
-    alpha = -np.inf
-    beta = np.inf
+        self._minimax.cache_clear()
 
-    value, action = _negamax(
-        state=state, depth=depth, alpha=alpha, beta=beta, maximize=maximize
-    )
+        meta_state = self._minimax(
+            state=state, depth=self.depth, alpha=-np.inf, beta=np.inf, maximize=True,
+        )
 
-    _LOGGER.debug(f"Best action '{action}' with value '{value}'.")
+        # pylint: disable=no-value-for-parameter
+        _LOGGER.debug(self._minimax.cache_info())
+        # pylint: enable=no-value-for-parameter
+        _LOGGER.debug(meta_state)
 
-    return action
+        return meta_state

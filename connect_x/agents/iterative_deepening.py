@@ -36,7 +36,7 @@ class IterativeDeepening:
         self.max_depth = max_depth
 
     def __run_func(self, result, *args, **kwargs):
-        result.value = self.func(*args, **kwargs)
+        _, result.value = self.func(*args, **kwargs)
 
     def _run_func(self, start_time, depth, *args, **kwargs):
         result = Value("i", 1)
