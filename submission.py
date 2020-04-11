@@ -23,7 +23,7 @@ def _catalogued_action(state, player):
 
 
 def _planned_action(game, state, player):
-    action = IterativeDeepening(
+    return IterativeDeepening(
         negamax,
         timeout=game.timeout * TIMEOUT_BUFFER,
         max_depth=game.rows * game.columns - state.counter,
@@ -34,8 +34,6 @@ def _planned_action(game, state, player):
         heuristic_func=heuristic,
         order_actions_func=order_actions,
     )
-    _LOGGER.debug(f"Selected action: {action}.")
-    return action
 
 
 def act(observation, configuration):
