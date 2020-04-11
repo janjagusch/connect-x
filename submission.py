@@ -9,7 +9,7 @@ from datetime import datetime
 
 from connect_x.game import ConnectXGame, ConnectXState
 from connect_x.action_catalogue import get_action
-from connect_x.agents import negamax, IterativeDeepening
+from connect_x.agents import negamax
 from connect_x.config import heuristic, order_actions, TIMEOUT_BUFFER
 
 from connect_x.utils.logger import setup_logger
