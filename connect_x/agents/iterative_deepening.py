@@ -56,6 +56,11 @@ class IterativeDeepening:
         saves the latest result to a nonlocal variable in the closure.
         """
         for depth in range(self.min_depth, self.max_depth + 1):
+<<<<<<< HEAD
             _LOGGER.debug(f"Starting minimax with depth {depth}")
             self.result = await self.func(depth=depth, *args, **kwargs)
             _LOGGER.debug(f"Minimax with depth {depth} yielded action: {self.result}")
+=======
+            _LOGGER.debug(f"Minimax depth: {depth}.")
+            self.result = await self.func(*args, **{**kwargs, self.arg: depth})
+>>>>>>> 6a6bbfa... Update connect_x/agents/iterative_deepening.py
