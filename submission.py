@@ -9,7 +9,7 @@ from datetime import datetime
 
 from connect_x.game import ConnectXGame, ConnectXState
 from connect_x.action_catalogue import get_action
-from connect_x.agents import negamax
+from connect_x.agents import negamax, IterativeDeepening
 from connect_x.config import heuristic, order_actions, TIMEOUT_BUFFER
 
 from connect_x.utils.logger import setup_logger
@@ -34,6 +34,10 @@ def _planned_action(game, state, player):
         heuristic_func=heuristic,
         order_actions_func=order_actions,
     )
+<<<<<<< HEAD
+=======
+    _LOGGER.debug(f"Selected action: {action}.")
+>>>>>>> Changed submission.py back to its original form, moved iterative
     return action
 
 
@@ -53,7 +57,7 @@ def act(observation, configuration):
 
     game = ConnectXGame.from_configuration(configuration)
     state = ConnectXState.from_observation(
-        observation, configuration.rows, configuration.columns
+        observation, configuration.rows, configuration.columns   
     )
     player = observation.mark - 1
 
@@ -61,8 +65,6 @@ def act(observation, configuration):
     _LOGGER.debug(f"State hash: '{state.state_hash}'")
     _LOGGER.debug(f"Player: '{player}'.")
     action = _catalogued_action(state, player) or _planned_action(game, state, player)
-    if _catalogued_action(state, player):
-        _LOGGER.debug(f"Cache hit")
     end = datetime.now()
     _LOGGER.info(f"Action selected: '{action}'.")
     _LOGGER.debug(f"Time taken: {end - start}.")
