@@ -38,6 +38,7 @@ def _planned_action(game, state, player):
     return action
 
 
+
 def act(observation, configuration):
     """
     Decides what action to do next.
