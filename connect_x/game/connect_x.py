@@ -125,7 +125,7 @@ class ConnectXGame(Game):
             ConnectXGame: The game.
         """
 
-        if Version(kaggle_env_version) > Version("0.2.0"):
+        if Version(kaggle_env_version) >= Version("0.2.0"):
             return cls(
                 rows=configuration.rows,
                 columns=configuration.columns,
