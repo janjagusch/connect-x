@@ -4,7 +4,7 @@
 
 - Added `docs/DEVELOPMENT.md` to facilitate onboarding of new developers.
 - Made `.mark` attribute in `connect_x.game.connect_x.ConnectXState` protected.
-- Refactored `negamax` function in `connect_x.agents.minimax`.
+- Refactored `connect_x.agents.minimax`.
 
 ## 0.7.0
 
