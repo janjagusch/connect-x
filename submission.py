@@ -47,6 +47,7 @@ def act(observation, configuration):
     Returns:
         int: The action.
     """
+
     start = datetime.now()
 
     game = ConnectXGame.from_configuration(configuration)

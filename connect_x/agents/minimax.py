@@ -3,6 +3,7 @@ This module implements the Minimax algorithm.
 """
 
 from functools import lru_cache
+import asyncio
 
 import numpy as np
 
@@ -73,8 +74,9 @@ class Minimax:
                 if self.inplace:
                     self.game.undo(state, inplace=self.inplace)
 
-    @lru_cache(maxsize=100000)
-    def _minimax(self, state, depth, alpha, beta, maximize):
+    # @lru_cache(maxsize=100000)
+    async def _minimax(self, state, depth, alpha, beta, maximize):
+        await asyncio.sleep(0)
         value = self._static_evaluation(state=state, depth=depth)
         if value is not None:
             return value, None
@@ -87,7 +89,9 @@ class Minimax:
 
         if maximize:
             for action, child in self._child_states(state, actions):
-                value, _ = self._minimax(child, depth - 1, alpha, beta, maximize=False)
+                value, _ = await self._minimax(
+                    child, depth - 1, alpha, beta, maximize=False
+                )
                 if best_value is None or best_value < value:
                     best_value = value
                     best_action = action
@@ -97,7 +101,9 @@ class Minimax:
 
         else:
             for action, child in self._child_states(state, actions):
-                value, _ = self._minimax(child, depth - 1, alpha, beta, maximize=True)
+                value, _ = await self._minimax(
+                    child, depth - 1, alpha, beta, maximize=True
+                )
                 if best_value is None or best_value > value:
                     best_value = value
                     best_action = action
@@ -107,16 +113,16 @@ class Minimax:
 
         return best_value, best_action
 
-    def __call__(self, state):
+    async def __call__(self, state):
 
-        self._minimax.cache_clear()
+        # self._minimax.cache_clear()
 
-        meta_state = self._minimax(
+        meta_state = await self._minimax(
             state=state, depth=self.depth, alpha=-np.inf, beta=np.inf, maximize=True,
         )
 
         # pylint: disable=no-value-for-parameter
-        _LOGGER.debug(self._minimax.cache_info())
+        # _LOGGER.debug(self._minimax.cache_info())
         # pylint: enable=no-value-for-parameter
         _LOGGER.debug(meta_state)
 

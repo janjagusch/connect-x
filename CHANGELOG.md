@@ -5,6 +5,7 @@
 - Added `docs/DEVELOPMENT.md` to facilitate onboarding of new developers.
 - Made `.mark` attribute in `connect_x.game.connect_x.ConnectXState` protected.
 - Refactored `connect_x.agents.minimax`.
+- Made minimax an async function, and implemented the iterative_deepening logic using asyncio.wait_for().
 
 ## 0.7.0
 

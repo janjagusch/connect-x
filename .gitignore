@@ -131,3 +131,6 @@ dmypy.json
 
 # Data folder
 data/**/*
+
+# VScode editor
+.vscode/

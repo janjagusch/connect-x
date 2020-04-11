@@ -2,9 +2,8 @@
 This module provides an iterative deepening class that can be used as a decorator.
 """
 
+import asyncio
 import functools
-import time
-from multiprocessing import Process, Value
 
 from connect_x.utils.logger import setup_logger
 
@@ -35,51 +34,27 @@ class IterativeDeepening:
         self.min_depth = min_depth
         self.max_depth = max_depth
 
-    def __run_func(self, result, *args, **kwargs):
-        _, result.value = self.func(*args, **kwargs)
-
-    def _run_func(self, start_time, depth, *args, **kwargs):
-        result = Value("i", 1)
-        func_process = Process(
-            target=self.__run_func,
-            args=[result, *args],
-            kwargs={self.arg: depth, **kwargs},
-        )
-        func_process.start()
-        while time.perf_counter() - start_time <= self.timeout:
-            if not func_process.is_alive():
-                break
-            time.sleep(0.001)
-        else:
-            _LOGGER.debug(
-                f"Timed out! Total time taken: {time.perf_counter() - start_time}."
-            )
-            func_process.terminate()
-            func_process.join()
-            raise TimeoutError
-        return result.value
-
     def __call__(self, *args, **kwargs):
-        depth = self.min_depth
-        result = None
-        start_time = time.perf_counter()
+        self.result = None
 
-        while True:
-            if self.max_depth and depth > self.max_depth:
-                _LOGGER.debug(
-                    f"Maximum depth={self.max_depth} reached. "
-                    "Breaking out of the loop."
-                )
-                break
-            _LOGGER.debug(f"Starting iterative deepening with depth={depth}.")
+        async def call_with_timeout():
             try:
-                result = self._run_func(start_time, depth, *args, **kwargs)
-            except TimeoutError:
-                break
-            _LOGGER.debug(
-                f"Iterative deepening with depth={depth} completed. "
-                f"Result: {result}"
-            )
-            depth += 1
+                await asyncio.wait_for(
+                    self.__iterative_deepening(*args, **kwargs), timeout=self.timeout
+                )
+            except asyncio.TimeoutError:
+                _LOGGER.debug(f"Timed out internally")
+                return
 
-        return result
+        asyncio.run(call_with_timeout())
+        return self.result
+
+    async def __iterative_deepening(self, *args, **kwargs):
+        """
+        Repeats the minimax algorithm with an increasingle larger depth, and
+        saves the latest result to a nonlocal variable in the closure.
+        """
+        for depth in range(self.min_depth, self.max_depth + 1):
+            _LOGGER.debug(f"Starting minimax with depth {depth}")
+            _, self.result = await self.func(depth=depth, *args, **kwargs)
+            _LOGGER.debug(f"Minimax with depth {depth} yielded action: {self.result}")

@@ -51,10 +51,6 @@ class TestConnectXState:
         assert state.counter == state._update_counter(state.bitmaps)
 
     @staticmethod
-    def test_state_hash(state):
-        assert isinstance(state.state_hash, int)
-
-    @staticmethod
     def test___repr__(state):
         assert isinstance(state.__repr__(), str)
 
