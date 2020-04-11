@@ -55,7 +55,7 @@ def act(observation, configuration):
 
     game = ConnectXGame.from_configuration(configuration)
     state = ConnectXState.from_observation(
-        observation, configuration.rows, configuration.columns   
+        observation, configuration.rows, configuration.columns
     )
     player = observation.mark - 1
 
