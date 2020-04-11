@@ -4,15 +4,6 @@ This module provides an iterative deepening class that can be used as a decorato
 
 import asyncio
 import functools
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import time
-import asyncio
-from multiprocessing import Process, Value
->>>>>>> Changed submission.py back to its original form, moved iterative
-=======
->>>>>>> e584ed4653d4bb65a61496f6d2df84336b41c4c9
 
 from connect_x.utils.logger import setup_logger
 
