@@ -31,7 +31,7 @@ def _planned_action(game, state, player):
 
     async def iterative_deepening():
         """
-        Repeats the minimax algorithm with an increasingle larger depth, and
+        Repeats the minimax algorithm with increasing depth, and
         saves the latest result to a nonlocal variable in the closure.
         """
         nonlocal result
