@@ -1,10 +1,6 @@
 """
 This module contains the submission for the Kaggle competition.
-Version: 0.6.0.
 """
-
-import asyncio
-
 from datetime import datetime
 
 from connect_x.game import ConnectXGame, ConnectXState
